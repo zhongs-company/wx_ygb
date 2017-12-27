@@ -1,0 +1,10 @@
+//app.js
+App({
+    onLaunch: function (options) {
+        var { channel_code, program_code } = wx.getExtConfigSync();
+        this.channel_code = channel_code;
+        this.program_code = program_code;
+    },
+    onShow: function (options) {
+    }
+})

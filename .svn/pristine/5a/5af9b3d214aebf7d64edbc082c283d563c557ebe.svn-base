@@ -1,0 +1,31 @@
+{
+    "pages": [
+        "pages/main/main",
+        "pages/resouceImages/index",
+        "pages/exit/index",
+        "pages/resouceVideo/index",
+        "pages/resouceAudio/index",
+        "pages/mainEnd/index",
+        "pages/mainUserCenter/index",
+        "pages/myPrizeYgq/index",
+        "pages/myWallet/index",
+        "pages/myPrizeYlq/index",
+        "pages/myPrize/index",
+        "pages/myPrizeCode/index",
+        "pages/myPrizeDzq/index",
+        "pages/myPrizeDfh/index",
+        "pages/myPrizeYfh/index",
+        "pages/myPrizeSelectGet/index",
+        "pages/compereList/index",
+        "pages/entityDetail/index",
+        "pages/packageDetail/index",
+        "pages/packagePopup/index",
+        "pages/exchange/index"
+    ],
+    "window": {
+        "backgroundTextStyle": "light",
+        "navigationBarBackgroundColor": "#fff",
+        "navigationBarTitleText": "WeChat",
+        "navigationBarTextStyle": "black"
+    }
+}

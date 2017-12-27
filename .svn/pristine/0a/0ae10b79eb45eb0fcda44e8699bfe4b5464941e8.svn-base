@@ -1,0 +1,18 @@
+<!--  待领取  -->
+<view class="prize-item">
+    <view class="item-header">
+        <view class="header-left">
+            <image class="left-logo" src="https://1251097942.cdn.myqcloud.com/1251097942/tv/scws/wozhidao/images/head/touxiang1.jpg"></image>
+            <view class="left-p">由 肯德基 提供</view>
+        </view>
+        <view class="header-right red gray">待领取</view>
+    </view>
+    <view class="item-content">
+        <image class="content-img" src="https://1251097942.cdn.myqcloud.com/1251097942/tv/scws/wozhidao/images/head/touxiang1.jpg"></image>
+        <view class="content-font">
+            <view class="font-p">小米5X变焦双摄手机</view>
+            <view class="font-p1">11-08  16:30</view>
+        </view>
+        <view class="content-num">x1</view>
+    </view>
+</view>

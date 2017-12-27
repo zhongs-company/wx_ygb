@@ -1,0 +1,35 @@
+{
+    "extEnable": true,
+    "extAppid": "wx232e019aed45b9a1",
+    "ext": {
+        "extAppid": "wx232e019aed45b9a1",
+        "name": "wechat"
+    },
+    "extPages": {
+        "pages/logs/logs": {
+            "navigationBarTitleText": "logs1"
+        }
+    },
+    "window": {
+        "backgroundTextStyle": "light",
+        "navigationBarBackgroundColor": "#fff",
+        "navigationBarTitleText": "Demo",
+        "navigationBarTextStyle": "black"
+    },
+    "tabBar": {
+        "list": [
+            {
+                "pagePath": "pages/index/index",
+                "text": "首页"
+            },
+            {
+                "pagePath": "pages/logs/logs",
+                "text": "日志"
+            }
+        ]
+    },
+    "networkTimeout": {
+        "request": 10000,
+        "downloadFile": 10000
+    }
+}

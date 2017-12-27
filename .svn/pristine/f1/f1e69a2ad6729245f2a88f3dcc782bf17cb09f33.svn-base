@@ -1,0 +1,44 @@
+function time(date) {
+    var date = getDate(date);
+    var h = date.getHours();
+    var m = date.getMinutes()
+
+    if (h < 10) {
+        h = '0' + h;
+    } 
+    
+    if (m < 10) {
+        m = '0' + m;
+    }
+    
+    return h + ' : ' + m;
+}
+
+function split(date) {
+    return date.split(',').filter(function (item) {
+        return item;
+    }).map(function (item) {
+        if (item.indexOf('/') === 0) {
+            return item.substring(1, item.length);
+        } else {
+            return item;
+        }
+    });
+}
+
+function markers(longitude, latitude) {
+    return [{
+        id: 0,
+        iconPath: "/images/icon-address.png",
+        width: 23,
+        height: 32,
+        longitude: longitude,
+        latitude: latitude
+    }]
+}
+
+module.exports = {
+    time: time,
+    split: split,
+    markers: markers
+}

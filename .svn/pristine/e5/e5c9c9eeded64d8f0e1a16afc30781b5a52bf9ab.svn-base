@@ -1,0 +1,153 @@
+import * as utils from '../../utils/util'
+import * as api from './api'
+var app = getApp();
+
+Page({
+
+    /**
+     * 页面的初始数据
+     */
+    data: {
+
+    },
+
+    /**
+     * 生命周期函数--监听页面加载
+     */
+    onLoad: function(options) {
+        api.msgList(app.channel_code, app.program_code, (data) => {
+            var compere = [];
+            var {
+                msgList,
+                channelName,
+                programName,
+                banner,
+                mpAccount,
+                runtime
+            } = data;
+
+            if (msgList) {
+                if (msgList.length) {
+                    msgList.forEach((item) => {
+
+                        item.icon = utils.getUrl(item.icon);
+                        item.createTime = utils.time(item.createTime);
+
+                        if (item.resourceType == 1) {
+                            if (item.resource.images) {
+                                item.resource.images = utils.split(item.resource.images).map((img) => utils.getUrl(img));
+                                item.resource.imagesMore = item.resource.images.slice(0, 3);
+                            }
+                        }
+
+                        if (item.resourceType == 2) {
+                            if (item.resource.images) {
+                                item.resource.url = utils.getUrl(item.resource.url);
+                            }
+                        }
+
+                        if (item.resourceType == 3) {
+                            if (item.resource) {
+                                item.resource.poster = utils.getUrl(item.resource.poster);
+                                item.resource.url = utils.getUrl(item.resource.url);
+                            }
+                        }
+
+                        compere.push({
+                            nickName: item.nickName,
+                            icon: item.icon
+                        });
+
+                    });
+                }
+            }
+
+            if (banner) {
+                banner = utils.getUrl(banner);
+            }
+
+            compere = utils.uniqeByKeys(compere, ['nickName']);
+
+
+            this.setData({
+                compere,
+                msgList,
+                channelName,
+                programName,
+                banner,
+                mpAccount,
+                runtime
+            });
+
+
+        });
+    },
+
+    /**
+     * 生命周期函数--监听页面初次渲染完成
+     */
+    onReady: function() {
+
+    },
+
+    /**
+     * 生命周期函数--监听页面显示
+     */
+    onShow: function() {
+
+    },
+
+    /**
+     * 生命周期函数--监听页面隐藏
+     */
+    onHide: function() {
+
+    },
+
+    /**
+     * 生命周期函数--监听页面卸载
+     */
+    onUnload: function() {
+
+    },
+
+    /**
+     * 页面相关事件处理函数--监听用户下拉动作
+     */
+    onPullDownRefresh: function() {
+
+    },
+
+    /**
+     * 页面上拉触底事件的处理函数
+     */
+    onReachBottom: function() {
+
+    },
+
+    /**
+     * 用户点击右上角分享
+     */
+    onShareAppMessage: function() {
+
+    },
+
+    playCompereVideo(e) {
+        var { src } = e.target.dataset;
+        if (src) {
+            wx.navigateTo({
+                url: `/pages/video/index?src=${src}`
+            });
+        }
+
+    },
+
+    checkImg(e) {
+        var { imgarr, img } = e.target.dataset;
+        console.log(e)
+        wx.previewImage({
+            current: img,
+            urls: imgarr // 需要预览的图片http链接列表
+        })
+    }
+})

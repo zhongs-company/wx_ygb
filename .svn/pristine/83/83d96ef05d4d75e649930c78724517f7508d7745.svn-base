@@ -1,0 +1,146 @@
+import config from './utils/config'
+
+App({
+    scene: 0,
+    shareTicket: '',
+    onLaunch: function(options) {
+
+        if (options.scene) {
+            this.scene = options.scene;
+        }
+
+        var {
+            channel_code,
+            program_code,
+            appid,
+            extAppid
+        } = wx.getExtConfigSync();
+        this.channel_code = channel_code;
+        this.program_code = program_code;
+        //console.log("onLaunch:", options);
+    },
+
+    onShow: function(options) {
+        console.log("app onShow:", options);
+        this.scene = options.scene || 0;
+        this.shareTicket = options.shareTicket || '';
+    },
+
+    getOpenGId(id, cb) {
+
+        this.getWatermark((watermark) => {
+
+            if (this.shareTicket) {
+                wx.getShareInfo({
+                    shareTicket: this.shareTicket,
+                    success: (res) => {
+                        console.log('wx.getShareInfo success:', res);
+
+                        var { iv, encryptedData } = res;
+
+                        wx.request({
+                            url: `${config.zc_url1}/lotteryRedpack/userGroupInto`,
+                            method: 'POST',
+                            data: {
+                                id,
+                                watermark,
+                                iv,
+                                encryptedData
+                            },
+                            success: (res) => {
+                                console.log('lotteryRedpack/userGroupInto success res:', res);
+                                if (res.statusCode == 200) {
+                                    cb && cb(res.data);
+                                } else {
+                                    console.log('lotteryRedpack/userGroupInto statusCode != 200:', res);
+                                }
+                            },
+                            fail: (res) => {
+                                console.log('lotteryRedpack/userGroupInto fail :', res);
+                            }
+                        });
+
+                    },
+                    fail: (res) => {
+                        console.log('wx.getShareInfo fail:', res)
+                    }
+                });
+            } else {
+                console.log('shareTicket 不存在：', this.shareTicket);
+            }
+
+        });
+
+    },
+
+    getWatermark(cb) {
+        wx.checkSession({
+            success: () => {
+                var watermark = wx.getStorageSync('watermark');
+                if (!watermark) {
+                    this.login(cb);
+                } else {
+                    wx.setStorageSync("watermark", watermark);
+                    cb && cb(watermark);
+                }
+            },
+            fail: () => {
+                //console.log('水印过期');
+                this.login(cb);
+            }
+        });
+    },
+
+    login(cb) {
+        var {
+            channel_code,
+            program_code,
+            appid,
+            extAppid
+        } = wx.getExtConfigSync();
+
+        wx.login({
+            success: function(res) {
+                console.log('login 参数：', JSON.stringify({
+                    appId: appid,
+                    channelCode: channel_code,
+                    code: res.code,
+                    extAppid: extAppid,
+                    programCode: program_code
+                }))
+
+                if (res.code) {
+                    //发起网络请求
+                    wx.request({
+                        url: `${config.https_url}/mini/login`,
+                        method: 'POST',
+                        data: {
+                            appId: appid,
+                            channelCode: channel_code,
+                            code: res.code,
+                            extAppid: extAppid,
+                            programCode: program_code
+                        },
+                        success: (res) => {
+                            //console.log(res.data.data);
+                            if (res.statusCode == 200) {
+                                var watermark = res.data.data
+                                if (watermark) {
+                                    wx.setStorageSync("watermark", watermark);
+                                    cb && cb(watermark);
+                                }
+                            } else {
+                                console.log('mini/login errCode :', res);
+                            }
+                        },
+                        fail: (res) => {
+                            console.log('mini/login fail :', res);
+                        }
+                    })
+                } else {
+                    console.log('获取用户登录态失败！' + res.errMsg)
+                }
+            }
+        });
+    }
+});

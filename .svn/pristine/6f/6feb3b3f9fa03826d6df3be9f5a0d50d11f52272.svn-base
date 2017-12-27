@@ -1,0 +1,1068 @@
+import config from '../../utils/config'
+import * as utils from '../../utils/util'
+import WebSocket from '../../utils/WebSocket'
+var app = getApp();
+
+
+// function mock() {
+//     var arr = [];
+//     for (var i = 1; i < 100; i++) {
+//         arr.push({
+//             id: utils.rdNum(),
+//             userIcon: `https://1251097942.cdn.myqcloud.com/1251097942/tv/scws/wozhidao/images/head/touxiang${i}.jpg`,
+//             userNickname: utils.rdNum()
+//         });
+//     }
+//     return arr;
+// }
+
+Page({
+
+    /**
+     * 页面的初始数据
+     */
+    webSocket: null,
+    data: {
+        topItemId: 'id0',
+        entityArr: [],
+        packageArr: [],
+        scrollWinList: [],
+        isHideQunQiangPopup: true,
+        isHideQiangPopup: true,
+        isHideQiangPopupAni: true,
+        isHidePackageBtn: true,
+        isWinHide: true,
+        isTolower: false,
+        listInput: [],
+        listOutput: [],
+        imgsInput: [],
+        imgsOutput: [],
+        inputValue: '',
+        isRotateBanner: false,
+        pageIsHide: true,
+        websoketData: [],
+        headAniTimer: null,
+        itemId: 'id0'
+    },
+
+    //webSocket消息35 获取红包滚动信息
+    getPackageScrollData(data) {
+        var { packageArr } = this.data;
+        data.money = utils.toFixed(data.money);
+        packageArr.push(data);
+        this.setData({
+            packageArr
+        });
+    },
+
+    //领取红包，调用红包领取接口
+    getPackage(cb) {
+        app.getWatermark((watermark) => {
+            wx.request({
+                url: `${config.zc_url}/lotteryRedpack/lottery`,
+                method: 'POST',
+                data: {
+                    watermark: watermark
+                },
+                success: (res) => {
+                    console.log('抢红包 req:', watermark);
+                    console.log('抢红包 res:', res);
+
+                    if (res.statusCode == 200) {
+                        cb && cb(res.data);
+                    }
+                },
+                fail: res => {
+                    console.log('lotteryRedpack/lottery fail:', res);
+                    this.hideQunQiangPopup();
+                }
+            });
+        });
+    },
+
+    //去红包详情页面
+    toPackageDetail() {
+        this.getPackage((res) => {
+
+            var { title } = this.data;
+
+            var obj = JSON.stringify(Object.assign(res.data, { title }));
+
+            if (res.data) {
+                wx.navigateTo({
+                    url: `/pages/packageDetail/index?obj=${obj}`,
+                    complete: () => {
+                        this.hideQunQiangPopup();
+                    }
+                });
+            }
+
+        });
+    },
+    clickCompereToDetail() {
+
+        var { websoketData, title } = this.data;
+
+        var obj = JSON.stringify({
+            id: websoketData[0].resource.lotteryRedpackSendId,
+            title: title
+        });
+
+        wx.navigateTo({
+            url: `/pages/packageDetail/index?obj=${obj}`,
+            complete: () => {
+
+            }
+        });
+    },
+    hideQunQiangPopup() {
+        this.setData({
+            isHideQunQiangPopup: true
+        });
+    },
+    showQunQiangPopup() {
+        this.setData({
+            isHideQunQiangPopup: false
+        });
+    },
+    parsePageOptions(options) {
+        console.log('main options:', options);
+        console.log('app scene:', app.scene);
+        // 群里点击进来的，展示红包弹窗
+        if (options.share === 'package' && (app.scene == '1008' || app.scene == '1044')) {
+            this.showQunQiangPopup();
+        }
+    },
+
+    /**
+     * 生命周期函数--监听页面加载
+     * 
+     */
+    onLoad: function(options) {
+
+        console.log('======= 分割线 =======');
+
+        this.parsePageOptions(options);
+
+        //获取页面基本信息
+        this.pageInit(() => {
+
+            //1.显示页面
+            this.setData({
+                pageIsHide: false
+            });
+
+            //2.播放直播流
+            this.liveAudioPlay();
+
+            //3.获取用户授权信息， 并连接socket
+            this.getUserInfoAndLinkSocket(() => {
+
+                //4.转盘缩小动画
+                this.setData({
+                    isChangeTop: true
+                });
+
+                //5.小头像动画
+                if (!this.data.headAniTimer) {
+                    console.log('headAniTimer', this.data.headAniTimer)
+                    this.startTopHeadAni();
+                }
+
+                //console.log('this.data:', this.data);
+
+              
+            });
+        });
+
+        wx.showShareMenu({
+            withShareTicket: true
+        });
+
+
+    },
+
+    /**
+     * 生命周期函数--监听页面初次渲染完成
+     */
+    onReady: function() {
+        console.log('main onReady');
+
+        this.compereAudio = wx.createAudioContext('compereAudio');
+        this.userAudio = wx.createAudioContext('userAudio');
+        this.liveAudio = wx.createAudioContext('liveAudio');
+
+        this.liveAudioPlay();
+    },
+
+    /**
+     * 生命周期函数--监听页面显示
+     */
+    onShow: function() {
+        console.log('main onShow');
+
+        this.liveAudioPlay();
+
+        if (this.webSocket) {
+            console.log('isOpen:', this.webSocket.isOpen);
+            if (!this.webSocket.isOpen) {
+                app.getWatermark((watermark) => {
+                    this.linkSocket(watermark, () => {});
+                });
+            }
+        }
+
+    },
+
+    /**
+     * 生命周期函数--监听页面隐藏
+     */
+    onHide: function() {
+        console.log('main onHide');
+    },
+
+    /**
+     * 生命周期函数--监听页面卸载
+     */
+    onUnload: function() {
+        console.log('main onUnload');
+
+        this.isSocketLinked = false;
+        this.webSocket.closeSocket();
+
+        if (this.data.headAniTimer) {
+            clearInterval(this.data.headAniTimer);
+            this.data.headAniTimer = null;
+        }
+
+        if (this.webSocket.socketHandler) {
+            clearInterval(this.webSocket.socketHandler);
+            this.webSocket.socketHandler = null;
+        }
+    },
+
+    /**
+     * 页面相关事件处理函数--监听用户下拉动作
+     */
+    onPullDownRefresh: function() {
+
+    },
+
+    /**
+     * 页面上拉触底事件的处理函数
+     */
+    onReachBottom: function() {
+
+    },
+
+    /**
+     * 用户点击右上角分享
+     */
+    onShareAppMessage: function(res) {
+
+        console.log('分享对象：', res);
+
+        var share = {
+            title: '',
+            path: '',
+            imageUrl: ''
+        };
+
+        if (res.from === 'button') {
+            // 来自页面内转发按钮
+            share.title = '中国交通广播正在发红包，数量不多了，快来抢~';
+            share.imageUrl = 'https://1251097942.cdn.myqcloud.com/1251097942/platform/miniApp/shake_broadcast_images/share-bg.png';
+            share.path = `/pages/main/main?share=package`
+        }
+
+        return {
+            title: share.title,
+            path: share.path,
+            imageUrl: share.imageUrl,
+            success: function(res) {
+                // 转发成功
+            },
+            fail: function(res) {
+                // 转发失败
+            },
+            complete: () => {
+                this.hideQiangPopup();
+            }
+        }
+    },
+
+    //初始化
+    pageInit(cb) {
+        // console.log('顶部初始化：', JSON.stringify({
+        //     channelCode: app.channel_code,
+        //     programCode: app.program_code
+        // }));
+
+        let parseData = (data) => {
+
+            //设置页面title
+            utils.setPageTile(data.title);
+
+            if (data.anchor) {
+                data.anchor.anchorIcon = utils.getUrl(data.anchor.anchorIcon);
+            }
+
+            //banner
+            data.banner = utils.getUrl(data.banner)
+
+            //电话数据
+            data.hotline = JSON.parse(data.hotline);
+
+            if (utils.isArray(data.hotline)) {
+                data.phoneMsg = [];
+                data.phoneNumber = [];
+                data.hotline.forEach((item) => {
+                    if (item.No && item.name) {
+                        data.phoneMsg.push(item.name);
+                        data.phoneNumber.push(item.No);
+                    }
+                });
+            }
+
+
+            //初始化红包和实物信息
+            if (data.lotteryRedpack) {
+                var { maxMoney, advertiserIcon } = data.lotteryRedpack;
+                data.lotteryRedpack.maxMoney = utils.toFixed(maxMoney);
+                data.lotteryRedpack.advertiserIcon = utils.getUrl(advertiserIcon);
+                if (data.lotteryRedpack.hasRedpack) {
+                    this.setData({
+                        isHidePackageBtn: false
+                    });
+                }
+            }
+
+            this.setData(data);
+        }
+
+        app.getWatermark((watermark) => {
+
+            this.setData({ watermark });
+
+            wx.request({
+                url: `${config.https_url}/mini/init`,
+                data: {
+                    watermark: watermark,
+                    channelCode: app.channel_code,
+                    programCode: app.program_code
+                },
+                success: (res) => {
+                    if (res.statusCode == 200) {
+                        //console.log(res);
+                        var data = res.data.data;
+
+                        // Object.assign(data, {
+                        //     lotteryRedpack: {
+                        //         id: '没用',
+                        //         hasRedpack: false,
+                        //         maxMoney: 1,
+                        //         advertiserName: '广告商名称',
+                        //         advertiserIcon: getUrl("imgs/20171123/b6dcd641-6733-4f18-8a12-5b6ea8328cb9.jpg"),
+                        //         lotteryNum: "中国电信1"
+                        //     }
+                        // });
+
+                        if (!data) {
+                            console.log('/mini/init 数据不存在', res.data.errMsg);
+
+                            wx.showToast({
+                                title: res.data.errMsg,
+                                image: '../../images/icon_wran.png',
+                                duration: 10 * 1000
+                            });
+
+                            return;
+                        }
+
+                        parseData(data);
+
+                        cb && cb();
+
+                    }
+                },
+                fail: res => {
+                    console.log('mini/init fail:', req, res);
+
+                }
+            });
+        });
+
+    },
+
+    //1.获取水印，
+    //2.获取iv, encryptedData
+    //3.调用user 接口
+    //4.连接socket
+    getUserInfoAndLinkSocket(cb) {
+
+        let { watermark } = this.data;
+
+        let userApi = (watermark, encryptedData, iv) => {
+            wx.request({
+                url: `${config.https_url}/mini/user`,
+                data: {
+                    watermark: watermark,
+                    encryptedData: encryptedData,
+                    iv: iv
+                },
+                success: (res) => {
+                    if (res.statusCode == 200) {
+                        this.linkSocket(watermark, cb);
+                    }
+                },
+                fail: (res) => {
+                    console.log('/mini/user fail:', res);
+                }
+            });
+        }
+
+        let setDefaultUserInfo = (userInfo = {}) => {
+            this.setData({
+                icon: utils.getHeadSrc(userInfo.avatarUrl) || config.icon,
+                nickName: userInfo.nickName || config.nickName
+            });
+        }
+
+
+        wx.getUserInfo({
+            withCredentials: true,
+            success: (res) => {
+                //console.log('用户基本信息：', res);
+                var { encryptedData, iv } = res;
+                userApi(watermark, encryptedData, iv);
+                setDefaultUserInfo(res.userInfo);
+            },
+            fail: res => {
+                console.log('wx.getUserInfo fail', res);
+                this.linkSocket(watermark, cb);
+                setDefaultUserInfo();
+            }
+        });
+
+    },
+
+    //连接socket
+    isSocketLinked: false,
+    linkSocket(watermark, cb) {
+        var websocket_url = `${config.websocket_url}/${app.channel_code}/${app.program_code}/user/ws?id=${watermark}`;
+        console.log('socket 链接:', websocket_url);
+        this.webSocket = new WebSocket({
+            url: websocket_url,
+            onMessage: res => {
+                var data = JSON.parse(res.data);
+                console.log('onMessage', data);
+                this.onMessage(data);
+                if (!this.isSocketLinked) {
+                    this.isSocketLinked = true;
+                    cb && cb();
+                }
+            },
+            debug: true
+        });
+    },
+
+    //订阅消息
+    onMessage(data) {
+
+        data.id = utils.rdNum();
+
+        // 实物抽奖倒计时
+        if (data.type == 31) {
+
+        }
+
+        // 实物开奖信息
+        if (data.type == 32) {
+
+        }
+
+        // 红包抽奖开始--显示红包按钮
+        if (data.type == 33) {
+            this.showPackageBtn(data);
+            return;
+        }
+
+        // 红包结束, 含有主持人区域的 红包信息
+        if (data.resourceType == 5) {
+            this.showPackageInfo(data);
+            return;
+        }
+
+        //红包顶部滚动信息
+        if (data.type == 36) {
+            this.getPackageScrollData(data);
+            return;
+        }
+
+
+        data.icon = utils.getHeadSrc(data.icon) || config.icon;
+        data.nickName = data.nickName || config.nickName;
+
+        // 用户进入房间
+        if (data.type == 1 && data.action == 1) {
+            this.onLineData(data);
+            return;
+
+        }
+
+        // 用户退出房间
+        if (data.type == 1 && data.action == -1) {
+            //this.offLineData(data);
+            return;
+        }
+
+        // type == 0 主持人消息
+        if (data.type == 0 && data.identity == 'compere') {
+            this.onCompereData(data);
+            return;
+        }
+
+        // type == 0 用户文本消息
+        if (data.type == 0 && data.identity == 'user') {
+            if (data.resourceType == 0) {
+                this.onUserTextData(data);
+            }
+        }
+
+    },
+
+    onLineData(data) {
+
+        var { imgsInput, imgsOutput } = this.data;
+        var isPush = true;
+
+        imgsInput.forEach((item) => {
+            if (item.icon == data.icon) {
+                isPush = false;
+                return;
+            }
+        });
+
+        imgsOutput.forEach((item) => {
+            if (item.icon == data.icon) {
+                isPush = false;
+                return;
+            }
+        });
+
+        //已经有相同的头像了
+        if (!isPush) {
+            return;
+        }
+
+        imgsInput.push(data);
+
+        this.setData({
+            imgsInput,
+            online: data.online
+        });
+
+    },
+
+    offLineData(data) {
+        var { imgsOutput } = this.data;
+
+        imgsOutput.forEach((item, index) => {
+            if (data.icon == item.icon) {
+                imgsOutput.shift(index, 1);
+            }
+        });
+
+        this.setData({
+            imgsOutput,
+            online: data.online
+        });
+
+    },
+
+    //顶部头像动画
+    startTopHeadAni() {
+        //定时插入头像
+        let insetHead = () => {
+            var { imgsInput, imgsOutput } = this.data;
+            var data = imgsInput.shift();
+            if (!data) return;
+            //插到第一个位置
+            imgsOutput.unshift(data);
+            this.setData({ imgsOutput });
+
+            data.timer = setTimeout(() => {
+                clearTimeout(data.timer);
+                data.timer = null;
+                data.headAni = true;
+
+                if (imgsOutput.length > 4) {
+                    imgsOutput.pop();
+                }
+
+                this.setData({ imgsOutput });
+
+            }, 100);
+        }
+
+        //定时插入列表
+        let insetList = () => {
+            var { listInput, listOutput } = this.data;
+            var data = listInput.shift();
+            if (!data) return;
+            listOutput.push(data);
+            this.setData({ listOutput });
+            if (this.data.isTolower) {
+                this.inputFocus();
+            }
+        }
+
+        //实物和红包的信息展示，优先展示实物中奖信息
+        let isWin = true;
+        let insetScrollWinData = () => {
+            var { entityArr, packageArr, scrollWinList } = this.data;
+
+            if (scrollWinList.length > 30) {
+                scrollWinList.length = 0;
+            }
+
+            if (entityArr.length != 0) {
+                var obj = entityArr.shift();
+                scrollWinList.push(obj);
+
+                this.setData({
+                    scrollWinList,
+                    topItemId: `id${scrollWinList[scrollWinList.length-1].id}`
+                });
+                return;
+            }
+
+            if (packageArr.length != 0) {
+                var obj = packageArr.shift();
+                scrollWinList.push(obj);
+                this.setData({
+                    scrollWinList,
+                    topItemId: `id${scrollWinList[scrollWinList.length-1].id}`
+                });
+            }
+        }
+
+        insetList();
+
+        this.data.headAniTimer = setInterval(() => {
+            insetHead();
+            insetList();
+            insetScrollWinData();
+
+
+            // if (isWin) {
+            //     isWin = false;
+            //     setTimeout(() => {
+            //         insetScrollWinData();
+            //         isWin = true;
+            //     }, 2 * 1000);
+            // }
+
+            // console.log(this.data.headAniTimer);
+        }, 1000 * 2);
+    },
+
+    onCompereData(data) {
+        var _this = this;
+        var { websoketData } = this.data;
+        var keys = Object.keys(_this.filterData);
+        websoketData.length = 0;
+
+        function getData(d) {
+            var data = null;
+            for (var i = 0; i < keys.length; i++) {
+                if (data = _this.filterData[keys[i]](d)) {
+                    break;
+                }
+            }
+            return data;
+        }
+
+        if (utils.isObject(data)) {
+            websoketData.push(getData(data));
+            this.setData({ websoketData });
+        }
+
+        // if (utils.isArray(data)) {
+        //     data.forEach((item, index, arr) => {
+        //         websoketData.push(getData(item));
+        //     });
+        //     this.setData({ websoketData });
+        // }
+    },
+
+    onUserTextData(data) {
+
+        var { listInput } = this.data;
+
+        listInput.push(data);
+
+        this.setData({ listInput });
+    },
+
+    // 抽奖开始
+    showPackageBtn(data) {
+
+        var { lotteryRedpack } = this.data;
+
+        data.advertiserIcon = utils.getUrl(data.advertiserIcon);
+        data.maxMoney = utils.toFixed(data.maxMoney);
+
+        this.setData({
+            'lotteryRedpack.advertiserName': data.advertiserName,
+            'lotteryRedpack.advertiserIcon': data.advertiserIcon,
+            'lotteryRedpack.maxMoney': data.maxMoney,
+            isHidePackageBtn: false
+        });
+    },
+
+    // 主持人消息类型---红包结果信息
+    showPackageInfo(data) {
+        this.setData({
+            isHidePackageBtn: true
+        });
+
+        var { websoketData } = this.data;
+        websoketData.length = 0;
+
+        if (data.resource) {
+            data.resource.money = utils.toFixed(data.resource.money);
+        }
+
+        websoketData.push(data);
+
+        this.setData({
+            websoketData: websoketData
+        });
+
+    },
+
+    // 点击抢红包
+    showQiangPopup() {
+        this.setData({
+            isHideQiangPopup: false,
+            isHideQiangPopupAni: false
+        })
+    },
+
+    //隐藏抢红包弹窗
+    hideQiangPopup() {
+        this.setData({
+            isHideQiangPopupAni: true
+        });
+    },
+
+    //消息类型
+    //0.文本 1.图片 2.音频 3.视频 4.位置 5.红包 6.实物 7.卡券 
+    filterData: {
+        text(data) {
+            if (data.resourceType != 0) return false;
+            data.createTime = utils.time(data.createTime);
+            data.icon = `${config.websocket_data_src}/${data.icon}`;
+            return data;
+        },
+        image(data) {
+            if (data.resourceType != 1) return false;
+            data.createTime = utils.time(data.createTime);
+            data.icon = `${config.websocket_data_src}/${data.icon}`;
+            data.resource.images = utils.split(data.resource.images).map((img) => `${config.websocket_data_src}/${img}`);
+            //data.resource.imagesMore = data.resource.images.slice(0, 3);
+            return data;
+        },
+        voice(data) {
+            if (data.resourceType != 2) return false;
+            data.isPlay = false;
+            data.createTime = utils.time(data.createTime);
+            data.icon = `${config.websocket_data_src}/${data.icon}`;
+            data.resource.url = `${config.websocket_data_src}/${data.resource.url}`;
+            return data;
+        },
+        video(data) {
+            if (data.resourceType != 3) return false;
+            data.createTime = utils.time(data.createTime);
+            data.icon = `${config.websocket_data_src}/${data.icon}`;
+            data.resource.poster = `${config.websocket_data_src}/${data.resource.poster}`;
+            data.resource.url = `${config.websocket_data_src}/${data.resource.url}`;
+            return data;
+        },
+        location(data) {
+            if (data.resourceType != 4) return false;
+            data.createTime = utils.time(data.createTime);
+            data.icon = `${config.websocket_data_src}/${data.icon}`;
+            return data;
+        }
+    },
+
+    //打电话
+    call() {
+        var { phoneNumber, phoneMsg } = this.data;
+
+        if (!phoneNumber) {
+            console.log('没有电话数据');
+            return;
+        }
+
+        wx.showActionSheet({
+            itemList: phoneMsg,
+            success: function(res) {
+                wx.makePhoneCall({
+                    phoneNumber: phoneNumber[res.tapIndex]
+                })
+            },
+            fail: function(res) {
+                console.log(res.errMsg)
+            }
+        });
+    },
+
+    //查看图片
+    checkImg() {
+        var { websoketData } = this.data;
+        var images = websoketData[0].resource.images
+        wx.previewImage({
+            current: images[0],
+            urls: images // 需要预览的图片http链接列表
+        })
+    },
+
+    //播放主持人语音
+    playCompereVoice() {
+        var { websoketData } = this.data;
+
+        //是否播放
+        if (websoketData[0].isPlay) {
+            this.compereAudio.pause();
+            websoketData[0].isPlay = false;
+        } else {
+            //播放
+            websoketData[0].isPlay = true;
+            this.compereAudio.setSrc(websoketData[0].resource.url);
+            this.compereAudio.play();
+        }
+
+        this.setData({ websoketData });
+
+    },
+
+    //播放主持人视频
+    playCompereVideo() {
+
+        this.compereAudio.pause();
+
+        var { websoketData } = this.data;
+        var videoSrc = websoketData[0].resource.url;
+
+        if (videoSrc) {
+            wx.navigateTo({
+                url: `/pages/video/index?src=${videoSrc}`
+            });
+        }
+    },
+
+    //查看地图
+    checkMap() {
+        var { websoketData } = this.data;
+        var map = websoketData[0].resource;
+        if (map) {
+            wx.openLocation({
+                latitude: map.latitude - 0,
+                longitude: map.longitude - 0,
+                address: map.address,
+                name: map.message,
+                scale: 28
+            })
+        }
+    },
+
+
+    //1主持人语音-开始播放
+    compereAudioStart() {
+        console.log('1主持人语音-开始播放');
+
+        // this.compereAudio && this.compereAudio.pause();
+        this.userAudio && this.userAudio.pause();
+        this.liveAudio && this.liveAudio.pause();
+        this.setData({
+            isRotateBanner: false
+        });
+
+    },
+
+    //主持人语音-暂停
+    compereAudioPause() {
+        console.log('主持人语音-暂停');
+
+        //播放直播流
+        if (this.data.liveUrl) {
+            this.liveAudio && this.liveAudio.play();
+            this.setData({
+                isRotateBanner: true
+            });
+        }
+
+        var { websoketData } = this.data;
+        if (websoketData[0].isPlay) {
+            websoketData[0].isPlay = false;
+        }
+
+        this.setData({ websoketData });
+
+    },
+
+    //主持人语音-播放完毕
+    compereAudioEnd() {
+        console.log('主持人语音-播放完毕');
+
+        var { websoketData } = this.data;
+        websoketData[0].isPlay = false;
+        this.setData({ websoketData });
+    },
+
+    //2用户语音-开始播放
+    userAudioStart() {
+        this.compereAudio && this.compereAudio.pause();
+        // this.userAudio && this.userAudio.pause();
+        this.liveAudio && this.liveAudio.pause();
+    },
+
+    //用户语音-播放完毕
+    userAudioEnd() {
+
+    },
+
+
+    //直播流-开始播放
+    liveAudioStart() {
+        console.log('直播流-开始播放');
+
+        this.compereAudio && this.compereAudio.pause();
+        this.userAudio && this.userAudio.pause();
+        // this.liveAudio && this.liveAudio.pause();
+        this.setData({
+            isRotateBanner: true
+        });
+
+    },
+
+    //直播流-暂停
+    liveAudioPause() {
+        console.log('直播流-暂停');
+        this.setData({
+            isRotateBanner: false
+        });
+        this.isFirstLivePlay = false;
+    },
+
+    //直播流-播放完毕
+    liveAudioEnd() {
+        console.log('直播流-播放完毕');
+        this.setData({
+            isRotateBanner: false
+        });
+        this.isFirstLivePlay = false;
+    },
+
+    //直播流-play
+    isFirstLivePlay: false,
+    liveAudioPlay() {
+        if (this.isFirstLivePlay) {
+            console.log('已经在播直播流');
+            return;
+        };
+        var { liveUrl } = this.data;
+        if (liveUrl && this.liveAudio) {
+            this.liveAudio.setSrc(liveUrl);
+            this.liveAudio.play();
+            this.isFirstLivePlay = true;
+        }
+    },
+
+    //获取input输入框的值
+    inputChange(e) {
+        this.setData({
+            inputValue: e.detail.value
+        })
+    },
+
+    sendInputData() {
+        var { inputValue, icon, nickName, listOutput } = this.data;
+        if (inputValue.trim()) {
+
+            var id = utils.rdNum();
+
+            var obj = {
+                id,
+                createTime: utils.time(new Date() - 0),
+                icon: icon,
+                identity: 'user',
+                nickName: nickName,
+                resource: {
+                    message: inputValue,
+                    resourceId: -1
+                },
+                resourceType: -1
+            }
+
+            listOutput.push(obj);
+
+            this.webSocket.sendMessage(inputValue);
+
+            var itemId = `id${id}`
+
+            this.setData({
+                itemId,
+                inputValue: '',
+                listOutput
+            });
+
+        }
+
+    },
+
+    //获得焦点
+    inputFocus() {
+        var { listOutput } = this.data;
+        if (listOutput.length == 0) return;
+        var obj = listOutput[listOutput.length - 1];
+        if (obj) {
+            this.setData({
+                itemId: `id${obj.id}`
+            });
+        }
+    },
+    //scroll 
+    scrollView(e) {
+        this.data.isTolower = false;
+    },
+    //scroll-view滚动到底部
+    scrollViewTolower(e) {
+        this.data.isTolower = true;
+    },
+
+    //直播流暂停播放开关
+    liveAudioSwitchBtn(){
+        if(this.isFirstLivePlay){
+            //暂停
+            this.isFirstLivePlay = false;
+            this.liveAudio.pause();
+        }else{
+            //播放
+            this.isFirstLivePlay = true;
+            this.liveAudio.play();
+        }
+    },
+
+    stopPropagation(){
+        return;
+    },
+
+    packageAniCb(){
+        console.log('回调')
+    }
+
+})

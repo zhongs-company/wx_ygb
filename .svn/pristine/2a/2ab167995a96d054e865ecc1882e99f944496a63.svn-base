@@ -1,0 +1,23 @@
+import config from '../../utils/config'
+
+
+// 获取用户中实物奖信息
+export let getLotteryUserInfo = (watermark, id, cb) => {
+    wx.request({
+        url: `${config.zc_url}/lotteryEntity/getLotteryUserInfo`,
+        method: 'POST',
+        data: {
+            watermark,
+            id
+        },
+        success: (res) => {
+        	cb && cb(res.data);
+        },
+        fail: res => {
+            console.log('lotteryRedpack/getLotteryUserInfo fail:', JSON.stringify({
+                watermark,
+                id
+            }), res);
+        }
+    });
+}

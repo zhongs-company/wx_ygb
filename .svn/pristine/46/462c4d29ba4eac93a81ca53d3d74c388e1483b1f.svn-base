@@ -1,0 +1,421 @@
+import config from '../../utils/config'
+import WebSocket from '../../utils/WebSocket'
+import * as utils from '../../utils/util'
+let app = getApp();
+
+
+Page({
+    /**
+     * 页面的初始数据
+     */
+    data: {
+        bgImg: '',
+        inputValue: '',
+        disussViewIsHide: true,
+        isThrottle: true, //滚动函数，节流变量
+        isFloatBlockHide: true, //控制缩略图的显示，隐藏
+        websoketData: []
+    },
+
+    /**
+     * 生命周期函数--监听页面加载
+     */
+    onLoad: function(options) {
+
+        wx.getUserInfo({
+            success: (res) => {
+                var userInfo = res.userInfo
+
+                this.setData(userInfo)
+
+                // var nickName = userInfo.nickName
+                // var avatarUrl = userInfo.avatarUrl
+                // var gender = userInfo.gender //性别 0：未知、1：男、2：女
+                // var province = userInfo.province
+                // var city = userInfo.city
+                // var country = userInfo.country
+            }
+        })
+
+        let websocket_url = `${config.websocket_url}/${app.channel_code}/${app.program_code}/user/ws?id=123123`;
+
+        this.setData({
+            bgImg: `${config.cdn_image_src}/temp-img01.jpg`,
+            websocket_data_image_src: config.websocket_data_src
+        });
+
+        this.webSocket = new WebSocket({
+            url: websocket_url,
+            onMessage: res => {
+                var data = JSON.parse(res.data);
+                console.log('onMessage', data);
+                this.onMessage(data)
+            },
+            debug: false
+        });
+
+    },
+
+    /**
+     * 生命周期函数--监听页面初次渲染完成
+     */
+    onReady: function() {
+        this.audioCtx = wx.createAudioContext('myAudio');
+    },
+
+    /**
+     * 生命周期函数--监听页面显示
+     */
+    onShow: function() {
+
+    },
+
+    /**
+     * 生命周期函数--监听页面隐藏
+     */
+    onHide: function() {
+
+    },
+
+    /**
+     * 生命周期函数--监听页面卸载
+     */
+    onUnload: function() {
+        this.webSocket.closeSocket();
+    },
+
+    /**
+     * 页面相关事件处理函数--监听用户下拉动作
+     */
+    onPullDownRefresh: function() {
+
+    },
+
+    /**
+     * 页面上拉触底事件的处理函数
+     */
+    onReachBottom: function() {
+
+    },
+
+    /**
+     * 用户点击右上角分享
+     */
+    onShareAppMessage: function() {
+
+    },
+    /**
+     * 监听页面滚动
+     * 有对滚动函数做节流处理
+     */
+    onPageScroll(e) {
+        return;
+        if (!this.data.isThrottle) return;
+        this.setData({
+            isThrottle: false
+        });
+        setTimeout(() => {
+            //滚动条距离顶部大于292px，显示缩略的banner
+            if (e.scrollTop > 240) {
+                this.setData({
+                    isFloatBlockHide: false
+                });
+            } else {
+                this.setData({
+                    isFloatBlockHide: true
+                });
+            }
+            this.setData({
+                isThrottle: true
+            })
+        }, 100);
+    },
+    //打电话
+    call() {
+        var arr = ['A', 'B', 'C'];
+        wx.showActionSheet({
+            itemList: arr,
+            success: function(res) {
+                wx.makePhoneCall({
+                    phoneNumber: arr[res.tapIndex]
+                })
+            },
+            fail: function(res) {
+                console.log(res.errMsg)
+            }
+        });
+    },
+    //只看主持
+    showHost() {
+        this.setData({
+            listSwitch: true
+        });
+    },
+    //看全部
+    showAll() {
+        this.setData({
+            listSwitch: false
+        });
+    },
+    //订阅消息
+    onMessage(res) {
+
+        var _this = this;
+        var keys = Object.keys(_this.filterData);
+
+        function getData(d) {
+            var data = null;
+            for (var i = 0; i < keys.length; i++) {
+                if (data = _this.filterData[keys[i]](d)) {
+                    break;
+                }
+            }
+            return data;
+        }
+
+        var { websoketData } = this.data;
+
+        if (utils.isType("Object")(res)) {
+            websoketData.push(getData(res));
+            this.setData({ websoketData });
+        }
+
+        if (utils.isType("Array")(res)) {
+            data.forEach((item, index, arr) => {
+                websoketData.push(getData(item));
+            });
+            this.setData({ websoketData });
+        }
+    },
+    filterData: {
+        text(data) {
+            if (data.resourceType != 0) return false;
+            data.createTime = utils.time(data.createTime);
+            data.icon = `${config.websocket_data_src}/${data.icon}`;
+            return data;
+        },
+        image(data) {
+            if (data.resourceType != 1) return false;
+            data.createTime = utils.time(data.createTime);
+            data.icon = `${config.websocket_data_src}/${data.icon}`;
+            data.resource.images = utils.split(data.resource.images).map((img) => `${config.websocket_data_src}/${img}`);
+            data.resource.imagesMore = data.resource.images.slice(0, 3);
+            return data;
+        },
+        voice(data) {
+            if (data.resourceType != 2) return false;
+            data.createTime = utils.time(data.createTime);
+            data.icon = `${config.websocket_data_src}/${data.icon}`;
+            data.resource.url = `${config.websocket_data_src}/${data.resource.url}`;
+            return data;
+        },
+        video(data) {
+            if (data.resourceType != 3) return false;
+            data.createTime = utils.time(data.createTime);
+            data.icon = `${config.websocket_data_src}/${data.icon}`;
+            data.resource.poster = `${config.websocket_data_src}/${data.resource.poster}`;
+            data.resource.url = `${config.websocket_data_src}/${data.resource.url}`;
+            return data;
+        },
+        location(data) {
+            if (data.resourceType != 4) return false;
+            data.createTime = utils.time(data.createTime);
+            data.icon = `${config.websocket_data_src}/${data.icon}`;
+            return data;
+        }
+    },
+    //播放视频
+    playVideo(e) {
+
+        //处理语音播放
+        this.audioAniCont();
+        this.audioCtx.pause();
+
+        var src = e.currentTarget.dataset.src;
+        var obj = null;
+        if (src.indexOf('?') != -1) {
+            obj = JSON.stringify(utils.parseQueryString(src));
+            src = src.split('?')[0]
+            wx.navigateTo({
+                url: `/pages/video/index?src=${src}&obj=${obj}`
+            });
+        } else {
+            wx.navigateTo({
+                url: `/pages/video/index?src=${src}`
+            });
+        }
+    },
+    //查看图片
+    imgView(e) {
+
+        //处理语音播放
+        this.audioAniCont();
+        this.audioCtx.pause();
+
+        var { img, imgarr } = e.currentTarget.dataset;
+
+        if (!utils.isType("Array")(imgarr)) {
+            wx.previewImage({
+                current: img,
+                urls: [imgarr] // 需要预览的图片http链接列表
+            })
+        } else {
+            wx.previewImage({
+                current: img,
+                urls: imgarr // 需要预览的图片http链接列表
+            })
+        }
+    },
+    //查看地图
+    mapView(e) {
+
+        //处理语音播放
+        this.audioAniCont();
+        this.audioCtx.pause();
+
+        var { obj } = e.currentTarget.dataset;
+        wx.openLocation({
+            latitude: obj.latitude - 0,
+            longitude: obj.longitude - 0,
+            address: obj.address,
+            name: obj.message,
+            scale: 28
+        })
+    },
+    //显示评论框
+    discussView() {
+        this.setData({
+            disussViewIsHide: false
+        })
+    },
+    //隐藏评论框
+    hideDisussView() {
+        this.setData({
+            disussViewIsHide: true
+        });
+        this.hideCmsg();
+    },
+    //禁止评论框滑动
+    moveDiscuss() {
+        return;
+    },
+    //获取input输入框的值
+    inputChange(e) {
+        this.setData({
+            inputValue: e.detail.value
+        })
+    },
+    //提交评论
+    disussSub() {
+
+        var { inputValue, avatarUrl, nickName, websoketData, listSwitch } = this.data
+
+        if (inputValue.trim()) {
+
+            var obj = {
+                createTime: utils.time(new Date() - 0),
+                avatarUrl: avatarUrl,
+                identity: 'user',
+                nickName: nickName,
+                resource: {
+                    message: inputValue,
+                    resourceId: -1
+                },
+                resourceType: -1
+            }
+
+            websoketData.push(obj);
+
+            this.webSocket.sendMessage(inputValue);
+
+            this.setData({
+                inputValue: '',
+                websoketData: websoketData
+            });
+
+            this.hideDisussView();
+
+            //如果是只看主持人
+            if(listSwitch){
+                this.setData({
+                    listSwitch:false
+                });
+            }
+
+            if (websoketData.length > 4) {
+                wx.pageScrollTo({
+                    scrollTop: 10000000000
+                });
+            }
+
+        } else {
+            this.showCmsg('评论不能为空！');
+        }
+    },
+    //显示cmsg提示框
+    showCmsg(value) {
+        this.setData({
+            cmsgValue: value
+        });
+        setTimeout(() => {
+            this.setData({
+                cmsgValue: ''
+            });
+        }, 2000);
+    },
+    //隐藏cmsg提示框
+    hideCmsg() {
+        this.setData({
+            cmsgValue: ''
+        });
+    },
+    //播放音频
+    playMusic(e) {
+        var { src, index } = e.currentTarget.dataset;
+        if (!src) return;
+        var { websoketData } = this.data;
+
+        //是否播放
+        if (websoketData[index].isPlay) {
+            this.audioCtx.pause();
+
+            websoketData[index].isPlay = false;
+            this.setData({ websoketData });
+        } else {
+            //动画        
+            this.audioAniCont(index);
+            //播放
+            this.audioCtx.setSrc(src);
+            this.audioCtx.play();
+        }
+    },
+    //开始播放列表语音
+    playStart() {
+        console.log('开始播放音频')
+    },
+    //列表语音播放完的回调
+    playEnd() {
+        this.audioAniCont();
+    },
+    //音频错误
+    playError(e){
+        console.log('voice error:', e);
+        this.audioAniCont();
+        this.showCmsg(e.detail.errMsg);
+    },
+    //语音播放动画处理
+    audioAniCont(index) {
+        var { websoketData } = this.data;
+        //动画
+        websoketData.forEach((item, index, arr) => {
+            if (item.resourceType == 2) {
+                item.isPlay = false;
+            }
+        });
+        if (index || index == 0) {
+            websoketData[index].isPlay = true;
+        }
+        this.setData({ websoketData });
+    }
+
+})

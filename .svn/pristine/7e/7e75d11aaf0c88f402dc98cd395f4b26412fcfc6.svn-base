@@ -1,0 +1,35 @@
+/**
+ * 保存最新的5条聊天记录
+ * data 是socket用户发送的消息
+ */
+export let saveTopicList = (data) => {
+    try {
+        var topicListArr = wx.getStorageSync('topicListArr');
+        if (!topicListArr) {
+            topicListArr = [];
+            topicListArr.push(data);
+        } else {
+            topicListArr = JSON.parse(topicListArr);
+            if (topicListArr.length > 5) {
+                topicListArr.shift();
+            }
+            topicListArr.push(data);
+        }
+        wx.setStorageSync('topicListArr', JSON.stringify(topicListArr));
+    } catch (e) {
+
+    }
+}
+
+export let getTopicList = () => {
+    try {
+        var topicListArr = wx.getStorageSync('topicListArr');
+        if (topicListArr) {
+            return JSON.parse(topicListArr);
+        } else {
+            return [];
+        }
+    } catch (e) {
+
+    }
+}

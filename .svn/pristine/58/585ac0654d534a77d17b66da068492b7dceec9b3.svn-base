@@ -1,0 +1,34 @@
+
+<view class="dfh-status">等待发货</view>
+
+<view class="dfh-address">
+    <view class="address-top">
+        <view class="top-left">收货人</view>
+        <view class="top-msg">小李  15668828756</view>
+    </view>
+     <view class="address-top">
+        <view class="top-left">地址</view>
+        <view class="top-msg">武汉市洪山区佳园路木香路2号创业资本汇众创楼5楼</view>
+    </view>
+</view>
+
+
+<view class="prize-item">
+    <view class="item-header">
+        <view class="header-left">
+            <image class="left-logo" src="https://1251097942.cdn.myqcloud.com/1251097942/tv/scws/wozhidao/images/head/touxiang1.jpg"></image>
+            <view class="left-p">由 肯德基 提供</view>
+        </view>
+    </view>
+    <view class="item-content">
+        <image class="content-img" src="https://1251097942.cdn.myqcloud.com/1251097942/tv/scws/wozhidao/images/head/touxiang1.jpg"></image>
+        <view class="content-font">
+            <view class="font-p">小米5X变焦双摄手机小米5X变焦双摄手机小米5X变焦双摄手机</view>
+            <view class="font-p1">x1</view>
+        </view>
+    </view>
+    <view class="item-footer">
+        <view class="footer-left">领取方式</view>
+        <view class="footer-right">快递物流</view>
+    </view>
+</view>

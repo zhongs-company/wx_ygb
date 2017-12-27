@@ -1,0 +1,18 @@
+<view class="image-blur" style="background-image:url({{banner}})"></view>
+<view class="room-bg"></view>
+
+<view class="top-topic">
+    <view class="topic-CD">
+        <view style="background-image:url({{banner}})" class="CD"></view>
+    </view>
+</view>
+
+<view class="end-title">{{title}}</view>
+
+<view class="end-p">本期直播互动已结束</view>
+<view class="end-p1">敬请期待下次互动</view>
+
+<view class="end-footer">
+    <view class="footer-btn left-btn">首页</view>
+    <view class="footer-btn right-btn" bindtap="toMy">我的</view>
+</view>

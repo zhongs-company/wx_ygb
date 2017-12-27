@@ -1,0 +1,46 @@
+<view class="smzq-block">
+    <view class="block-icon"></view>
+    <view class="block-t">您已领取奖品</view>
+    <view class="block-p2">领奖日期截止到2017-10-25</view>
+    <view class="block-p3">您的领奖码
+        <view class="red">235DSF</view> </view>
+    <view class="block-box">
+        <view class="box-title">自取说明</view>
+        <view class="box-msg">到领奖地点向工作人员出示领奖码，点击立即使用，完成领奖过程</view>
+    </view>
+</view>
+    
+<view class="prize-item">
+    <view class="item-header">
+        <view class="header-left">
+            <image class="left-logo" src="https://1251097942.cdn.myqcloud.com/1251097942/tv/scws/wozhidao/images/head/touxiang1.jpg"></image>
+            <view class="left-p">由 肯德基 提供</view>
+        </view>
+        <view class="header-right red ">待领取</view>
+    </view>
+    <view class="item-content">
+        <image class="content-img" src="https://1251097942.cdn.myqcloud.com/1251097942/tv/scws/wozhidao/images/head/touxiang1.jpg"></image>
+        <view class="content-p">小米5X变焦双摄手机小米5X变焦双摄手机小米5X变焦双摄手机小米5X变焦双摄手机</view>
+        <view class="content-p1">×1</view>
+    </view>
+</view>
+
+
+<view class="smzq-list">
+    <view class="list-item">
+        <view class="item-font">获奖人</view>
+        <view class="item-data">小李15688287665</view>
+    </view>
+    <view class="list-item">
+        <view class="item-font">获奖人</view>
+        <view class="item-data">小李15688287665</view>
+    </view>
+    <view class="list-item">
+        <view class="item-font">获奖人</view>
+        <view class="item-data">小李15688287665小李15688287665小李15688287665</view>
+    </view>
+    <view class="list-item">
+        <view class="item-font">获奖人</view>
+        <view class="item-data">小李15688287665</view>
+    </view>
+</view>

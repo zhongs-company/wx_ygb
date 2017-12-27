@@ -1,0 +1,20 @@
+<view class="wallet-header">
+    <view class="header-icon"></view>
+    <view class="header-p">我的钱包</view>
+    <view class="header-p1">25.50
+        <view class="min">元</view>
+    </view>
+    <view class="header-btn">提现</view>
+</view>
+
+<view class="wallet-title">交易记录</view>
+<view class="wallet-item">
+    <view class="item">
+        <image class="item-logo" src="https://1251097942.cdn.myqcloud.com/1251097942/platform/miniApp/shake_broadcast_images/tx.png"></image>
+        <view class="item-font">
+            <view class="font-p">苏宁易购红包</view>
+            <view class="font-p1">2017-11-18  20:15</view>
+        </view>
+        <view class="item-m">12321</view>
+    </view>
+</view>

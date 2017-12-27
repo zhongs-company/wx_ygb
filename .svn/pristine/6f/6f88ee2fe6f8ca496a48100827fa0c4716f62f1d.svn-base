@@ -1,0 +1,25 @@
+{
+    "pages": [
+        "pages/myWallet/index",
+        "pages/main/main",
+        "pages/myPrize/index",
+        "pages/myPrizeYgq/index",
+        "pages/myPrizeYfh/index",
+        "pages/myPrizeDfh/index",
+        "pages/myPrizeYlq/index",
+        "pages/myPrizeDzq/index",
+        "pages/getSelect/index",
+        "pages/getAuto/index",
+        "pages/compereList/index",
+        "pages/entityDetail/index",
+        "pages/packageDetail/index",
+        "pages/index/index",
+        "pages/video/index"
+    ],
+    "window": {
+        "backgroundTextStyle": "light",
+        "navigationBarBackgroundColor": "#fff",
+        "navigationBarTitleText": "WeChat",
+        "navigationBarTextStyle": "black"
+    }
+}

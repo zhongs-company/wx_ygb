@@ -1,0 +1,13 @@
+const config = {};
+
+let isProduction = false;
+
+if (isProduction) {
+    //生成环境
+} else {
+    //开发环境
+    config.cdn_image_src = `http://1251097942.cdn.myqcloud.com/1251097942/platform/miniApp/shake_broadcast_images`;
+    config.websocket_url = `wss://tmp.s.weshaketv.com/broadcast`;
+    config.websocket_data_image_src = `http://192.168.10.57:9999/reader`;
+}
+module.exports = config;

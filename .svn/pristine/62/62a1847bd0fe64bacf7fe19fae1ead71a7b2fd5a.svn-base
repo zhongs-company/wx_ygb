@@ -1,0 +1,554 @@
+.index-banner {
+    height: 480rpx;
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+}
+
+.image-blur {
+    width: 200%;
+    height: 200%;
+    -webkit-filter: blur(80rpx);
+    filter: blur(80rpx);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate3d(-50%, -50%, 0);
+    z-index: -1;
+    background-size: 200% 200%;
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+
+.index-banner .image-wrap {
+    display: inline-block;
+    margin-top: 32rpx;
+    position: relative;
+}
+
+.index-banner .float-banner {
+    position: fixed;
+    top: 28rpx;
+    left: 20rpx;
+    margin-top: 0;
+    z-index: 3;
+}
+
+.index-banner .image-wrap .image-banner {
+    width: 320rpx;
+    height: 320rpx;
+}
+
+.index-banner .float-banner .image-banner {
+    width: 140rpx;
+    height: 140rpx;
+}
+
+.index-play-btn {
+    width: 106rpx;
+    height: 106rpx;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate3d(-50%, -50%, 0);
+    background-image: url(http://1251097942.cdn.myqcloud.com/1251097942/platform/miniApp/shake_broadcast_images/icon-play-btn.png);
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+
+.index-banner .float-banner .index-play-btn {
+    width: 64rpx;
+    height: 64rpx;
+}
+
+/* .index-banner .image-blur::after{
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.2);
+} */
+
+.index-banner .top-box {
+    display: flex;
+    justify-content: space-between;
+    font-size: 26rpx;
+    color: #444;
+    padding: 28rpx 32rpx 0;
+    /* position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    box-sizing: border-box;
+    z-index: 2; */
+}
+
+.index-banner .top-box .left {
+    background-color: rgba(255, 255, 255, 0.8);
+    height: 68rpx;
+    line-height: 68rpx;
+    border-radius: 34rpx;
+    padding-right: 34rpx;
+    padding-left: 8rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.index-banner .top-box .left .user-head {
+    width: 55rpx;
+    height: 55rpx;
+    border-radius: 50%;
+    position: relative;
+    margin-right: 12rpx;
+}
+
+.index-banner .top-box .left .user-head::after {
+    content: '';
+    width: 22rpx;
+    height: 21rpx;
+    position: absolute;
+    right: -5rpx;
+    bottom: -2rpx;
+    background-image: url(http://1251097942.cdn.myqcloud.com/1251097942/platform/miniApp/shake_broadcast_images/icon-v.png);
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+
+.index-banner .top-box .left .font::before {
+    content: '';
+    width: 20rpx;
+    height: 27rpx;
+    display: inline-block;
+    background-image: url(http://1251097942.cdn.myqcloud.com/1251097942/platform/miniApp/shake_broadcast_images/icon-hot.png);
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    background-position: center center;
+    margin: 0 10rpx 0 4rpx;
+}
+
+.index-banner .top-box .right {
+    display: flex;
+}
+
+.index-banner .float {
+    position: fixed;
+    right: 0;
+    top: 0;
+    z-index: 3;
+    width: 100%;
+}
+
+.index-banner .float .left {
+    background-color: transparent;
+    padding-left: 210rpx;
+}
+
+.index-banner .float .left image {
+    display: none;
+}
+
+.index-banner .float .left .font {
+    font-size: 26rpx;
+    color: #fff;
+}
+
+.index-banner .top-box .right .btn {
+    margin-left: 14rpx;
+    width: 67rpx;
+    height: 67rpx;
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    background-position: center center;
+    border-radius: 50%;
+}
+
+.index-banner .top-box .right .btn-call {
+    background-image: url(http://1251097942.cdn.myqcloud.com/1251097942/platform/miniApp/shake_broadcast_images/icon-call.png);
+}
+
+.index-banner .top-box .right .btn-user {
+    position: relative;
+    background-image: url(http://1251097942.cdn.myqcloud.com/1251097942/platform/miniApp/shake_broadcast_images/icon-user.png);
+}
+
+.index-banner .top-box .right .btn .label {
+    background-color: #ff5741;
+    font-size: 16rpx;
+    color: #fff;
+    height: 24rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12rpx;
+    position: absolute;
+    right: -8rpx;
+    top: 0;
+}
+
+.index-banner .top-box .right .btn .msg {
+    width: 24rpx;
+}
+
+.index-banner .top-box .right .btn .msg1 {
+    padding: 0 12rpx;
+}
+
+.index-topic {
+    height: 113rpx;
+    line-height: 113rpx;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-top: 1px solid #e6ebea;
+    border-bottom: 1px solid #e6ebea;
+    padding: 0 20rpx;
+}
+
+.index-topic .left {
+    display: flex;
+    align-items: center;
+}
+
+.index-topic .left .label {
+    height: 36rpx;
+    line-height: 36rpx;
+    background-color: #ff5741;
+    color: #fff;
+    font-size: 24rpx;
+    padding: 0 8rpx;
+    border-radius: 10rpx;
+}
+
+.index-topic .left .content {
+    color: #333;
+    font-size: 32rpx;
+    padding-left: 20rpx;
+    max-width: 470rpx;
+    line-height: 36rpx;
+    height: 113rpx;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.index-topic .left .float-content {
+    position: fixed;
+    left: 164rpx;
+    top: 80rpx;
+    color: #fff;
+    z-index: 3;
+}
+
+.index-topic .right {
+    min-width: 120rpx;
+    text-align: right;
+    height: 100%;
+    color: #ff5741;
+    font-size: 24rpx;
+    padding-right: 21rpx;
+    background-size: 14rpx 7rpx;
+    background-repeat: no-repeat;
+    background-position: right center;
+    background-image: url(http://1251097942.cdn.myqcloud.com/1251097942/platform/miniApp/shake_broadcast_images/icon-arrow.png);
+}
+
+.index-content {
+    padding: 28rpx 20rpx 148rpx;
+    box-sizing: border-box;
+}
+
+.index-content .item {
+    margin-bottom: 44rpx;
+    display: flex;
+}
+
+.index-content .item .user-head {
+    width: 66rpx;
+    height: 66rpx;
+    border-radius: 50%;
+    margin-right: 17rpx;
+}
+
+.index-content .item .right {
+    flex: 1;
+}
+
+.index-content .item .right .top {
+    display: flex;
+    line-height: 42rpx;
+}
+
+.index-content .item .right .top .v {
+    color: #ffa800;
+    font-size: 26rpx;
+    margin-right: 25rpx;
+}
+
+.index-content .item .right .top .v::after {
+    content: '';
+    width: 22rpx;
+    height: 21rpx;
+    display: inline-block;
+    background-image: url(http://1251097942.cdn.myqcloud.com/1251097942/platform/miniApp/shake_broadcast_images/icon-v.png);
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+
+.index-content .item .right .top .name {
+    color: #333;
+    font-size: 30rpx;
+    margin-right: 25rpx;
+    max-width: 313rpx;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.index-content .item .right .top .time {
+    color: #999;
+    font-size: 22rpx;
+    margin-right: 25rpx;
+}
+
+.index-content .item .right .bottom {
+    color: #666;
+    line-height: 44rpx;
+    font-size: 30rpx;
+    padding-top: 22rpx;
+    word-break: break-all;
+}
+
+.index-content .item .right .images {
+    padding-top: 22rpx;
+    display: flex;
+    flex-wrap: wrap;
+    overflow: hidden;
+    position: relative;
+}
+
+.index-content .item .right .images .img {
+    width: 200rpx;
+    height: 200rpx;
+    margin-right: 14rpx;
+}
+
+.index-content .item .right .images .img-one {
+    width: 326rpx;
+    height: 326rpx;
+    margin-right: 14rpx;
+}
+
+.index-content .item .right .images .img:nth-child(3n) {
+    margin-right: 0;
+}
+
+.index-content .item .right .images .label {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    line-height: 41rpx;
+    height: 41rpx;
+    padding: 0 12rpx;
+    font-size: 22rpx;
+    color: #fff;
+    background-color: rgba(165, 163, 167, 0.3);
+    border-top-left-radius: 5rpx;
+}
+
+.index-content .item .right .video {
+    height: 362rpx;
+    padding-top: 22rpx;
+    width: 100%;
+    position: relative;
+}
+
+.index-content .item .right .video .myVideo {
+    width: 100%;
+    height: 100%;
+}
+
+.index-content .item .right .video .time {
+    position: absolute;
+    right: 26rpx;
+    bottom: 24rpx;
+    font-size: 22rpx;
+    color: #fff;
+}
+
+.index-content .item .right .video-banner {
+    height: 362rpx;
+    /* height: 100%; */
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.index-content .item .right .map-box {
+    width: 628rpx;
+    /* height: 280rpx; */
+    border-radius: 5rpx;
+    border: 1px solid #e5e5e5;
+    margin-top: 22rpx;
+    overflow: hidden;
+}
+
+.index-content .item .right .map-box .map-top {
+    background-color: #f8f8f8;
+    padding: 20rpx 29rpx;
+    max-height: 116rpx;
+    overflow: hidden;
+}
+
+.index-content .item .right .map-box .map-top .title {
+    font-size: 30rpx;
+    color: #666;
+    line-height: 46rpx;
+    max-width: 530rpx;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.index-content .item .right .map-box .map-top .address {
+    font-size: 24rpx;
+    color: #b0b0b0;
+    line-height: 39rpx;
+    max-width: 530rpx;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.index-content .item .right .map-box .map {
+    height: 164rpx;
+    width: 100%;
+    border-top-right-radius: 5rpx;
+    border-top-left-radius: 5rpx;
+}
+
+.index-footer {
+    height: 108rpx;
+    width: 100%;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    z-index: 5;
+    background-color: #fff;
+    border-top: 1px solid #d5dbe0;
+    border-bottom: 1px solid #d5dbe0;
+    box-shadow: 0 -2rpx 36rpx 2rpx rgba(242, 242, 242, 1);
+    display: flex;
+    align-items: center;
+    padding-left: 20rpx;
+}
+
+.index-footer .input-box {
+    width: 605rpx;
+    height: 76rpx;
+    line-height: 76rpx;
+    font-size: 30rpx;
+    color: #999;
+    background-color: #f0f0f0;
+    border-radius: 38rpx;
+    border: 1px solid #e8e5e5;
+    padding-left: 96rpx;
+    background-image: url(http://1251097942.cdn.myqcloud.com/1251097942/platform/miniApp/shake_broadcast_images/icon-pence.png);
+    background-size: 30rpx 30rpx;
+    background-repeat: no-repeat;
+    background-position: 34rpx 25rpx;
+    box-sizing: border-box;
+}
+
+.index-footer .send-btn {
+    width: 123rpx;
+    height: 100%;
+    background-image: url(http://1251097942.cdn.myqcloud.com/1251097942/platform/miniApp/shake_broadcast_images/icon-send-btn.png);
+    background-size: 54rpx 52rpx;
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+
+.float-block {
+    height: 198rpx;
+    background-color: #ccc;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    overflow: hidden;
+    transform: translate3d(0, -100%, 0);
+    transition: transform ease-out 0.3s;
+    transform-origin: center bottom;
+}
+
+.show-float-block {
+    transform: translate3d(0, 0, 0);
+}
+
+.bgcolor {
+    background-color: #d5dbe0;
+}
+
+/*评论框*/
+.index-discuss {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(48, 48, 48, 0.8);
+    z-index: 10;
+    /* transition: opacity ease-out 0.3s; */
+    /* opacity: 0; */
+}
+
+.discuss-box {
+    background-color: #f4f4f4;
+    height: 300rpx;
+    padding: 28rpx 30rpx 0;
+    text-align: right;
+    box-sizing: border-box;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 11;
+    width: 100%;
+    /* transition: opacity ease-out 0.3s; */
+    /* opacity: 0; */
+}
+
+.discuss-box .input {
+    background-color: #fff;
+    text-align: left;
+    width: 100%;
+    height: 184rpx;
+    padding: 20rpx 25rpx;
+    font-size: 28rpx;
+    color: #a5a5a5;
+    line-height: 32rpx;
+    word-break: break-all;
+    border: 2rpx #e4e4e4 solid;
+    border-radius: 10rpx;
+    box-sizing: border-box;
+}
+
+.discuss-box .btn {
+    font-size: 28rpx;
+    color: #fff;
+    height: 56rpx;
+    line-height: 56rpx;
+    background-color: #0db253;
+    border-radius: 10rpx;
+    padding: 0 32rpx;
+    display: inline-block;
+    margin-top: 18rpx;
+}

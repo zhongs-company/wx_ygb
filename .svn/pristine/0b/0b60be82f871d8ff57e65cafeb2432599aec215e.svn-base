@@ -1,0 +1,173 @@
+import * as api from './api'
+import * as utils from '../../utils/util'
+
+var app = getApp();
+
+Page({
+
+    /**
+     * 页面的初始数据
+     */
+    data: {
+        isShowPage: false
+    },
+
+    /**
+     * 生命周期函数--监听页面加载
+     */
+    onLoad: function(options) {
+        app.getWatermark((watermark) => {
+            api.getUserEntityList(watermark, 1, (res) => {
+                var { records, totalPage, totalRecord } = res.data;
+                if (records) {
+                    records.forEach((item) => {
+                        item.entityIcon = utils.getUrl(item.entityIcon);
+                        item.advertiserIcon = utils.getUrl(item.advertiserIcon);
+                    });
+                }
+                this.setData({ records, totalPage, totalRecord, isShowPage: true })
+            });
+        });
+    },
+
+    /**
+     * 生命周期函数--监听页面初次渲染完成
+     */
+    onReady: function() {
+
+    },
+
+    /**
+     * 生命周期函数--监听页面显示
+     */
+    onShow: function() {
+
+    },
+
+    /**
+     * 生命周期函数--监听页面隐藏
+     */
+    onHide: function() {
+
+    },
+
+    /**
+     * 生命周期函数--监听页面卸载
+     */
+    onUnload: function() {
+
+    },
+
+    /**
+     * 页面相关事件处理函数--监听用户下拉动作
+     */
+    onPullDownRefresh: function() {
+
+    },
+
+    /**
+     * 页面上拉触底事件的处理函数
+     */
+    onReachBottom: function() {
+
+    },
+
+    /**
+     * 用户点击右上角分享
+     */
+    onShareAppMessage: function() {
+
+    },
+
+    toPrizeDetail(e) {
+        console.log(e)
+        var { index } = e.currentTarget.dataset;
+        var { records } = this.data;
+        var status = records[index].status;
+        // 待领取
+        if (status == 1) { this.oDlq(records); }
+        // 待发货
+        if (status == 2) { this.oDfh(records); }
+        // 已发货
+        if (status == 3) { this.oYfh(records); }
+        // 待自取
+        if (status == 4) { this.oDzq(records); }
+        // 已领取
+        if (status == 5) { this.oYlq(records); }
+        // 已过期
+        if (status == 6) { this.oYgq(records); }
+    },
+    oDlq(records) {
+        // { entityId, title, address, phone, getType, entityName, advertiserName, entityIcon }
+
+        if (this.isODlq) {
+            return;
+        }
+        this.isODlq = true;
+
+        var { entityId } = records;
+
+        app.getWatermark((watermark) => {
+            api.getUserEntityDetail(watermark, entityId, (res) => {
+
+                var { getAddress, getPhone, getType, entityName, advertiserName, entityIcon } = res;
+
+                var data = JSON.stringify({
+                    entityId,
+                    title: '领取奖品',
+                    address: getAddress,
+                    phone: getPhone,
+                    getType,
+                    entityName,
+                    advertiserName,
+                    entityIcon
+                });
+
+                wx.navigateTo({
+                    url: `/pages/myPrizeSelectGet/index?data=${data}`
+                });
+
+                this.isODlq = false;
+
+            });
+        });
+
+    },
+    oDfh(records) {
+        var { entityId } = records;
+
+        wx.navigateTo({
+            url: `/pages/myPrizeDfh/index?entityId=${entityId}`
+        });
+
+    },
+    oYfh(records) {
+        var { entityId } = records;
+
+        wx.navigateTo({
+            url: `/pages/myPrizeYfh/index?entityId=${entityId}`
+        });
+    },
+    oDzq(records) {
+
+        var { entityId } = records;
+
+        wx.navigateTo({
+            url: `/pages/myPrizeDzq/index?entityId=${entityId}`
+        });
+    },
+    oYlq(records) {
+        var { entityId } = records;
+
+        wx.navigateTo({
+            url: `/pages/myPrizeYlq/index?entityId=${entityId}`
+        });
+    },
+    oYgq(records) {
+        var { entityId } = records;
+
+        wx.navigateTo({
+            url: `/pages/myPrizeYgq/index?entityId=${entityId}`
+        });
+    }
+})

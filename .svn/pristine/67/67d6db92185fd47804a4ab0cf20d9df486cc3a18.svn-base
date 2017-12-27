@@ -1,0 +1,103 @@
+import { cdn_image_src } from '../../utils/config';
+
+Page({
+    /**
+     * 页面的初始数据
+     */
+    data: {
+        bgImg: '',
+        //滚动函数，节流变量
+        isThrottle: true,   
+        //控制缩略图的显示，隐藏
+        isFloatBlockHide: true
+    },
+
+    /**
+     * 生命周期函数--监听页面加载
+     */
+    onLoad: function(options) {
+        this.setData({
+            bgImg: `${cdn_image_src}/temp-img01.jpg`
+        })
+    },
+
+    /**
+     * 生命周期函数--监听页面初次渲染完成
+     */
+    onReady: function() {
+
+    },
+
+    /**
+     * 生命周期函数--监听页面显示
+     */
+    onShow: function() {
+
+    },
+
+    /**
+     * 生命周期函数--监听页面隐藏
+     */
+    onHide: function() {
+
+    },
+
+    /**
+     * 生命周期函数--监听页面卸载
+     */
+    onUnload: function() {
+
+    },
+
+    /**
+     * 页面相关事件处理函数--监听用户下拉动作
+     */
+    onPullDownRefresh: function() {
+
+    },
+
+    /**
+     * 页面上拉触底事件的处理函数
+     */
+    onReachBottom: function() {
+
+    },
+
+    /**
+     * 用户点击右上角分享
+     */
+    onShareAppMessage: function() {
+
+    },
+    /**
+     * 监听页面滚动
+     * 有对滚动函数做节流处理
+     */
+    onPageScroll(e) {
+        if (!this.data.isThrottle) return;
+        this.setData({
+            isThrottle: false
+        });
+        setTimeout(() => {
+            //滚动条距离顶部大于292px，显示缩略的banner
+            if (e.scrollTop > 292) {
+                this.setData({
+                    isFloatBlockHide: false
+                });
+            } else {
+                this.setData({
+                    isFloatBlockHide: true
+                });
+            }
+            this.setData({
+                isThrottle: true
+            })
+        }, 100);
+    },
+
+    call() {
+        wx.makePhoneCall({
+            phoneNumber: '1340000' //仅为示例，并非真实的电话号码
+        })
+    }
+})

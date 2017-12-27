@@ -1,0 +1,33 @@
+function time(date) {
+    var date = getDate(date);
+    return date.getHours() + ' : ' + date.getMinutes()
+}
+
+function split(date) {
+    return date.split(',').filter(function(item) {
+        return item;
+    }).map(function(item) {
+        if (item.indexOf('/') === 0) {
+            return item.substring(1, item.length);
+        } else {
+            return item;
+        }
+    });
+}
+
+function markers(longitude, latitude) {
+	return [{
+		id:0,
+		iconPath:"./../images/icon-address.png",
+		width: 23,
+		height:32,
+		longitude:longitude,
+		latitude: latitude
+	}]
+}
+
+module.exports = {
+    time: time,
+    split: split,
+    markers: markers
+}

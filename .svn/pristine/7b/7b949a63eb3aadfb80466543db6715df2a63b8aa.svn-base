@@ -1,0 +1,20 @@
+<view class="c-menu {{ isShowMenu ? 'c-show-menu' : '' }}" catchtap="hideMenu">
+    <view class="menu-box" catchtap="stopPropagation">
+        <view class="box-user-info">
+            <image src="https://1251097942.cdn.myqcloud.com/1251097942/tv/scws/wozhidao/images/head/touxiang1.jpg" class="info-head"></image>
+            <view class="info-name">123</view>
+        </view>
+        <view class="box-list">
+            <view class="list-item icon-money">
+                <view class="item-font ">我的钱包</view>
+                <view class="item-money">25.50</view>
+            </view>
+            <view class="list-item icon-entity">
+                <view class="item-font">我的奖品</view>
+            </view>
+            <view class="list-item icon-address">
+                <view class="item-font">我的地址</view>
+            </view>
+        </view>
+    </view>
+</view>

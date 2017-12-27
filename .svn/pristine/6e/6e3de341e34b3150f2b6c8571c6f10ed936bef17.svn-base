@@ -1,0 +1,11 @@
+{
+    "extEnable": true,
+    "extAppid": "wxf7b204f854ac6d06",
+    "ext":
+    {
+        "appid":"wxcfd3c7d4020128d0",
+        "extAppid": "wxf7b204f854ac6d06",
+        "channel_code": "FM927",
+        "program_code": "70738d0e0fe64a7ba1831f984ce01768"
+    }
+}

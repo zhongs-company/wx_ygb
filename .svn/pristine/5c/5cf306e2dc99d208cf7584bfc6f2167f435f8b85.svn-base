@@ -1,0 +1,6 @@
+{
+    "navigationBarTitleText":"海洋现场秀",
+    "usingComponents": {
+        "c-msg": "/components/cmsg/index"
+    }
+}

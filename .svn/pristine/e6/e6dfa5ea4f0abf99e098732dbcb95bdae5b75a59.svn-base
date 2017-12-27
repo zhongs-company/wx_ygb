@@ -1,0 +1,129 @@
+import config from '../../utils/config';
+import WebSocket from '../../utils/WebSocket.js'; 
+let app = getApp();
+
+Page({
+    /**
+     * 页面的初始数据
+     */
+    data: {
+        bgImg: '',
+        isThrottle: true, //滚动函数，节流变量
+        isFloatBlockHide: true  //控制缩略图的显示，隐藏
+    },
+
+    /**
+     * 生命周期函数--监听页面加载
+     */
+    onLoad: function (options) {
+
+        let websocket_url = `${config.websocket_url}/${app.channel_code}/${app.program_code}/user/ws?id=`;
+
+        this.setData({
+            bgImg: `${config.cdn_image_src}/temp-img01.jpg`
+        });
+
+        // this.webSocket = new WebSocket({
+        //     url: 'ws://elric:8080/broadcast/FM927/1830/user/ws?id=123123',
+        //     onMessage: res => {
+        //         var data = JSON.parse(res.data);
+        //         console.log('onMessage', data);
+        //     },
+        //     debug: false
+        // });
+
+        // setTimeout(() => {
+        //     this.webSocket.sendMessage("123123");
+        // }, 1000);
+
+    },
+
+    /**
+     * 生命周期函数--监听页面初次渲染完成
+     */
+    onReady: function () {
+
+    },
+
+    /**
+     * 生命周期函数--监听页面显示
+     */
+    onShow: function () {
+
+    },
+
+    /**
+     * 生命周期函数--监听页面隐藏
+     */
+    onHide: function () {
+
+    },
+
+    /**
+     * 生命周期函数--监听页面卸载
+     */
+    onUnload: function () {
+
+    },
+
+    /**
+     * 页面相关事件处理函数--监听用户下拉动作
+     */
+    onPullDownRefresh: function () {
+
+    },
+
+    /**
+     * 页面上拉触底事件的处理函数
+     */
+    onReachBottom: function () {
+
+    },
+
+    /**
+     * 用户点击右上角分享
+     */
+    onShareAppMessage: function () {
+
+    },
+    /**
+     * 监听页面滚动
+     * 有对滚动函数做节流处理
+     */
+    onPageScroll(e) {
+        if (!this.data.isThrottle) return;
+        this.setData({
+            isThrottle: false
+        });
+        setTimeout(() => {
+            //滚动条距离顶部大于292px，显示缩略的banner
+            if (e.scrollTop > 240) {
+                this.setData({
+                    isFloatBlockHide: false
+                });
+            } else {
+                this.setData({
+                    isFloatBlockHide: true
+                });
+            }
+            this.setData({
+                isThrottle: true
+            })
+        }, 100);
+    },
+
+    call() {
+        var arr = ['A', 'B', 'C'];
+        wx.showActionSheet({
+            itemList: arr,
+            success: function (res) {
+                wx.makePhoneCall({
+                    phoneNumber: arr[res.tapIndex]
+                })
+            },
+            fail: function (res) {
+                console.log(res.errMsg)
+            }
+        });
+    }
+})

@@ -1,0 +1,16 @@
+image{
+    display: block;
+}
+
+textarea{
+    padding:0;
+    margin:0;
+}
+
+.show{
+    display:block;
+}
+
+.hide{
+    display:none;
+}

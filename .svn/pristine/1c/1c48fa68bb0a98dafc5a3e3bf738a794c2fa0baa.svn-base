@@ -1,0 +1,110 @@
+<view class="index-banner">
+    <view class="image-blur" style="background-image:url({{bgImg}})"></view>
+    <view class="top-box {{ isFloatBlockHide ? '' : 'float' }}">
+        <view class="left">
+            <image class="user-head" src="http://1251097942.cdn.myqcloud.com/1251097942/platform/miniApp/shake_broadcast_images/temp-img01.jpg"></image>
+            <image class="user-head" src="http://1251097942.cdn.myqcloud.com/1251097942/platform/miniApp/shake_broadcast_images/temp-img01.jpg"></image>
+            <view class="font">3458 人正在参与</view>
+        </view>
+        <view class="right">
+            <view class="btn btn-call" bindtap="call"></view>
+            <view class="btn btn-user">
+                <!-- <view class="label msg">1</view> -->
+                <!-- <view class="label msg1">100</view> -->
+            </view>
+        </view>
+    </view>
+    <view class="image-wrap {{ isFloatBlockHide ? '' : 'float-banner' }}">
+        <image class="image-banner" src="{{bgImg}}"></image>
+        <view class="index-play-btn"></view>
+    </view>
+</view>
+<view class="index-topic">
+    <view class="left">
+        <view class="label">话题</view>
+        <view class="content {{ isFloatBlockHide ? '' : 'float-content' }}">小时候爸妈为什么揍你？</view>
+    </view>
+    <view class="right">只看主持</view>
+</view>
+<view class="index-content">
+    <!-- 文本  -->
+    <view class="item txt">
+        <image class="user-head" src="http://1251097942.cdn.myqcloud.com/1251097942/platform/miniApp/shake_broadcast_images/temp-img01.jpg"></image>
+        <view class="right">
+            <view class="top">
+                <view class="name">娟娟不爱吃肉</view>
+                <view class="time">12：30</view>
+            </view>
+            <view class="bottom">妈妈我不要衣架 不要衣架 然后就变成了皮带一顿狂揍</view>
+        </view>
+    </view>
+    <!--主持人 文本  -->
+    <view class="item txt">
+        <image class="user-head" src="http://1251097942.cdn.myqcloud.com/1251097942/platform/miniApp/shake_broadcast_images/temp-img01.jpg"></image>
+        <view class="right">
+            <view class="top">
+                <view class="name">娟娟不爱吃肉</view>
+                <view class="v">主持人</view>
+                <view class="time">12：30</view>
+            </view>
+            <view class="bottom">妈妈我不要衣架 不要衣架 然后就变成了皮带一顿狂揍</view>
+        </view>
+    </view>
+    <!--主持人 文本 多图片 -->
+    <view class="item txt">
+        <image class="user-head" src="http://1251097942.cdn.myqcloud.com/1251097942/platform/miniApp/shake_broadcast_images/temp-img01.jpg"></image>
+        <view class="right">
+            <view class="top">
+                <view class="name">娟娟不爱吃肉</view>
+                <view class="v">主持人</view>
+                <view class="time">12：30</view>
+            </view>
+            <view class="images">
+                <image class="img" src="http://1251097942.cdn.myqcloud.com/1251097942/platform/miniApp/shake_broadcast_images/temp-img01.jpg"></image>
+                <image class="img" src="http://1251097942.cdn.myqcloud.com/1251097942/platform/miniApp/shake_broadcast_images/temp-img01.jpg"></image>
+                <image class="img" src="http://1251097942.cdn.myqcloud.com/1251097942/platform/miniApp/shake_broadcast_images/temp-img01.jpg"></image>
+                <view class="label">共4张</view>
+            </view>
+        </view>
+    </view>
+    <!--主持人 文本 单图片 -->
+    <view class="item txt">
+        <image class="user-head" src="http://1251097942.cdn.myqcloud.com/1251097942/platform/miniApp/shake_broadcast_images/temp-img01.jpg"></image>
+        <view class="right">
+            <view class="top">
+                <view class="name">娟娟不爱吃肉</view>
+                <view class="v">主持人</view>
+                <view class="time">12：30</view>
+            </view>
+            <view class="bottom">妈妈我不要衣架 不要衣架 </view>
+            <view class="images">
+                <image class="img-one" src="http://1251097942.cdn.myqcloud.com/1251097942/platform/miniApp/shake_broadcast_images/temp-img01.jpg"></image>
+            </view>
+        </view>
+    </view>
+    <!--主持人 视频-->
+    <view class="item txt">
+        <image class="user-head" src="http://1251097942.cdn.myqcloud.com/1251097942/platform/miniApp/shake_broadcast_images/temp-img01.jpg"></image>
+        <view class="right">
+            <view class="top">
+                <view class="name">娟娟不爱吃肉</view>
+                <view class="v">主持人</view>
+                <view class="time">12：30</view>
+            </view>
+            <view class="bottom">妈妈我不要衣架 不要衣架 </view>
+            <view class="video">
+                <image class="video-banner" mode="scaleToFill" src="http://1251097942.cdn.myqcloud.com/1251097942/platform/miniApp/shake_broadcast_images/temp-img01.jpg"></image>
+                <view class="index-play-btn"></view>
+                <view class="time">12:30</view>
+            </view>
+        </view>
+    </view>
+</view>
+<view class="index-footer">
+    <view class="input-box">我来说一说</view>
+    <view class="send-btn"></view>
+</view>
+
+<view class="float-block {{ isFloatBlockHide ? 'hide' : '' }}">
+    <view class="image-blur" style="background-image:url({{bgImg}})"></view>
+</view>

@@ -1,0 +1,30 @@
+<view class="smzq-block">
+    <view class="block-icon"></view>
+    <view class="block-t">您已领取奖品</view>
+    <view class="block-p2">领奖日期截止到2017-10-25</view>
+    
+    <view class="block-box">
+        <view class="box-title">
+            <image src="https://1251097942.cdn.myqcloud.com/1251097942/platform/miniApp/shake_broadcast_images/yql-icon.png" class="title-logo"></image>
+            <view class="title">由 树龄水电费 提供</view>
+        </view>
+        <view class="box-con">
+            <image src="https://1251097942.cdn.myqcloud.com/1251097942/platform/miniApp/shake_broadcast_images/yql-icon.png" class="con-img"></image>
+            <view class="con-p">小米5X变焦双摄手机小米5X变焦双摄手机小米5X变焦双摄手机</view>
+            <view class="con-p1">x1</view>
+        </view>
+    </view>
+</view>
+
+
+
+<view class="smzq-list">
+    <view class="list-item">
+        <view class="item-font">获奖人</view>
+        <view class="item-data">小李15688287665</view>
+    </view>
+    <view class="list-item">
+        <view class="item-font">获奖人</view>
+        <view class="item-data">小李15688287665</view>
+    </view>
+</view>

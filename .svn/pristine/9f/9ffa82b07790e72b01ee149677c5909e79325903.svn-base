@@ -1,0 +1,11 @@
+{
+    "extEnable": true,
+    "extAppid": "wx232e019aed45b9a1",
+    "ext":
+    {
+        "extAppid": "wx232e019aed45b9a1",
+        "name": "wechat",
+        "channel_code": "FM927",
+        "program_code": "1830"
+    }
+}

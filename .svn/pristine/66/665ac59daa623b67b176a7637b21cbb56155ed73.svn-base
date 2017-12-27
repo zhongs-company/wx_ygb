@@ -1,0 +1,159 @@
+<view class="index-banner">
+    <view class="image-blur" style="background-image:url({{bgImg}})"></view>
+    <view class="top-box {{ isFloatBlockHide ? '' : 'float' }}">
+        <view class="left">
+            <image class="user-head" src="http://1251097942.cdn.myqcloud.com/1251097942/platform/miniApp/shake_broadcast_images/temp-img01.jpg"></image>
+            <image class="user-head" src="http://1251097942.cdn.myqcloud.com/1251097942/platform/miniApp/shake_broadcast_images/temp-img01.jpg"></image>
+            <image class="user-head" src="http://1251097942.cdn.myqcloud.com/1251097942/platform/miniApp/shake_broadcast_images/temp-img01.jpg"></image>
+            <view class="font">3458 人正在参与</view>
+        </view>
+        <view class="right">
+            <view class="btn btn-call" bindtap="call"></view>
+            <view class="btn btn-user">
+                <!-- <view class="label msg">1</view> -->
+                <!-- <view class="label msg1">100</view> -->
+            </view>
+        </view>
+    </view>
+    <view class="image-wrap {{ isFloatBlockHide ? '' : 'float-banner' }}">
+        <image class="image-banner" src="{{bgImg}}"></image>
+        <view class="index-play-btn"></view>
+    </view>
+</view>
+<view class="index-topic">
+    <view class="left">
+        <view class="label">话题</view>
+        <view class="content {{ isFloatBlockHide ? '' : 'float-content' }}">小时候爸妈为什么揍你？</view>
+    </view>
+    <view hover-class="bgcolor" class="right" hidden="{{listSwitch}}" bindtap="showHost">只看主持</view>
+    <view hover-class="bgcolor" class="right" hidden="{{!listSwitch}}" bindtap="showAll">看全部</view>
+</view>
+<!-- 
+    TEXT(0, "文本"), IMAGES(1, "图片"), AUDIO(2, "音频"), VIDEO(3, "视频"), LOCATION(4, "位置")
+ -->
+<wxs src="../../wxs/filter.wxs" module="filter" />
+<view class="index-content">
+    <block wx:for="{{ websoketData }}" wx:key="">
+        <!-- 用户 文本  -->
+        <view hidden="{{ listSwitch }}" wx:if="{{ item.resourceType == -1 && item.identity === 'user' }}">
+            <view class="item txt" hidden="{{ listSwitch }}" wx:if="{{ item.resourceType == -1 && item.identity === 'user' }}">
+                <image class="user-head" src="{{item.avatarUrl}}"></image>
+                <view class="right">
+                    <view class="top">
+                        <view class="name">{{ item.nickName }}</view>
+                        <view class="time">{{ filter.time(item.createTime) }}</view>
+                    </view>
+                    <text class="bottom">{{ item.resource.message }}</text>
+                </view>
+            </view>
+        </view>
+        <!--主持人 文本  -->
+        <view class="item txt" wx:if="{{ item.resourceType == 0 && item.identity === 'compere' }}">
+            <image class="user-head" src="{{websocket_data_image_src}}/{{item.icon}}"></image>
+            <view class="right">
+                <view class="top">
+                    <view class="name">{{item.nickName}}</view>
+                    <view class="v" wx:if="{{item.identity === 'compere'}}">主持人</view>
+                    <view class="time">{{filter.time(item.createTime)}}</view>
+                </view>
+                <text class="bottom">{{item.resource.message}}</text>
+            </view>
+        </view>
+        <!--主持人 图片 -->
+        <view class="item txt" wx:if="{{ item.resourceType == 1 && item.identity === 'compere' }}">
+            <image class="user-head" src="{{websocket_data_image_src}}/{{item.icon}}"></image>
+            <view class="right">
+                <view class="top">
+                    <view class="name">{{item.nickName}}</view>
+                    <view class="v" wx:if="{{item.identity === 'compere'}}">主持人</view>
+                    <view class="time">{{filter.time(item.createTime)}}</view>
+                </view>
+                <text class="bottom">{{item.resource.message}}</text>
+                <!-- 多图  -->
+                <view class="images" wx:if="{{ filter.split(item.resource.images).length > 1 }}">
+                    <image class="img" mode="aspectFill" wx:for="{{ filter.split(item.resource.images) }}" wx:key="" src="{{websocket_data_image_src}}/{{item}}" bindtap="imgView" data-img="{{websocket_data_image_src}}/{{item}}" data-imgarr="{{filter.split(item.resource.images)}}"></image>
+                    <view class="label">共{{filter.split(item.resource.images).length}}张</view>
+                </view>
+                <!-- 单图  -->
+                <view class="images" wx:if="{{ filter.split(item.resource.images).length == 1 }}">
+                    <image class="img-one" mode="aspectFill" src="{{websocket_data_image_src}}/{{filter.split(item.resource.images)[0]}}" bindtap="imgView" data-img="{{websocket_data_image_src}}/{{filter.split(item.resource.images)[0]}}" data-imgarr="{{websocket_data_image_src}}/{{filter.split(item.resource.images)[0]}}"></image>
+                </view>
+            </view>
+        </view>
+        <!-- 音频 -->
+        <view class="item txt" wx:if="{{ item.resourceType == 2 && item.identity === 'compere' }}">
+            <image class="user-head" src="{{websocket_data_image_src}}/{{item.icon}}"></image>
+            <view class="right">
+                <view class="top">
+                    <view class="name">{{item.nickName}}</view>
+                    <view class="v" wx:if="{{item.identity === 'compere'}}">主持人</view>
+                    <view class="time">{{filter.time(item.createTime)}}</view>
+                </view>
+                <view class="music-box" bindtap="playMusic" data-src="{{ item.resource.url }}" data-index="{{ index }}">
+                    <view class="audio-ani-box {{ item.isPlay ? 'play' : '' }}">
+                        <view class="line line1 start"></view>
+                        <view class="line line2 start"></view>
+                        <view class="line line3 start"></view>
+                    </view>
+                </view>
+            </view>
+        </view>
+        <!--主持人 视频-->
+        <view class="item txt" wx:if="{{ item.resourceType == 3 && item.identity === 'compere' }}">
+            <image class="user-head" src="{{websocket_data_image_src}}/{{item.icon}}"></image>
+            <view class="right">
+                <view class="top">
+                    <view class="name">{{item.nickName}}</view>
+                    <view class="v" wx:if="{{item.identity === 'compere'}}">主持人</view>
+                    <view class="time">{{filter.time(item.createTime)}}</view>
+                </view>
+                <text class="bottom">{{item.resource.message}}</text>
+                <view class="video">
+                    <!-- <video id="{{item.resource.resourceId}}" poster="{{websocket_data_image_src}}/{{item.resource.poster}}" class="myVideo" wx:if="{{item.resource.url}}" src="{{item.resource.url}}"> -->
+                    <!--  <cover-view wx:if="{{item.resource.poster}}" data-id="{{item.resource.resourceId}}" bindtap="playVideo">
+                            <cover-image class="video-banner" src="{{websocket_data_image_src}}/{{item.resource.poster}}"/>
+                        </cover-view> -->
+                    <!-- </video> -->
+                    <image class="video-banner" src="{{websocket_data_image_src}}/{{item.resource.poster}}"></image>
+                    <view class="index-play-btn" data-src="{{item.resource.url}}" bindtap="playVideo"></view>
+                    <!-- <view class="time">{{filter.time(item.createTime)}}</view> -->
+                </view>
+            </view>
+        </view>
+        <!-- 地理位置 -->
+        <view class="item txt" wx:if="{{ item.resourceType == 4 && item.identity === 'compere' }}">
+            <image class="user-head" src="{{websocket_data_image_src}}/{{item.icon}}"></image>
+            <view class="right">
+                <view class="top">
+                    <view class="name">{{item.nickName}}</view>
+                    <view class="v" wx:if="{{item.identity === 'compere'}}">主持人</view>
+                    <view class="time">{{filter.time(item.createTime)}}</view>
+                </view>
+                <view class="map-box" bindtap="mapView" data-obj="{{item.resource}}">
+                    <view class="map-top">
+                        <view class="title">{{item.resource.message}}</view>
+                        <view class="address">{{item.resource.address}}</view>
+                    </view>
+                    <map class="map" id="map{{item.resource.resourceId}}" longitude="{{item.resource.longitude}}" latitude="{{item.resource.latitude}}" markers="{{ filter.markers(item.resource.longitude, item.resource.latitude) }}"></map>
+                </view>
+            </view>
+        </view>
+    </block>
+</view>
+<view class="index-float-block {{ isFloatBlockHide ? '' : 'show-float-block' }}">
+    <view class="image-blur" style="background-image:url({{bgImg}})"></view>
+</view>
+<view class="index-footer" hover-class="bgcolor" catchtap="discussView">
+    <view class="input-box">我来说一说</view>
+    <view class="send-btn"></view>
+</view>
+<!-- 评论框  -->
+<view class="index-discuss" catchtap="hideDisussView" hidden="{{disussViewIsHide}}" catchtouchmove="moveDiscuss"></view>
+<view class="discuss-box" hidden="{{disussViewIsHide}}">
+    <textarea class="input" focus="{{!disussViewIsHide}}" placeholder="{{ disussViewIsHide ? '' : '我来说一说'  }}" value="{{inputValue}}" bindinput="inputChange"></textarea>
+    <view class="btn" catchtap="disussSub">评论</view>
+</view>
+<!-- msg组件 -->
+<c-msg cmsg-is-show="{{!cmsgIsShow}}" cmsg-value="{{cmsgValue}}"></c-msg>
+
+<audio id="myAudio" bindended="playEnd" bindplay="playStart"></audio>

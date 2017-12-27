@@ -1,0 +1,45 @@
+/**
+ * 保存最新的5条聊天记录
+ * data 是socket用户发送的消息
+ * wx.setStorageSync('program_code', program_code);
+ *
+ * program_code
+ */
+export let saveTopicList = (data, program_code) => {
+
+    if(wx.getStorageSync('program_code') != program_code){
+        wx.removeStorageSync('topicListArr');
+        wx.setStorageSync('program_code', program_code);
+    }
+
+    try {
+        var topicListArr = wx.getStorageSync('topicListArr');
+        if (!topicListArr) {
+            topicListArr = [];
+            topicListArr.push(data);
+        } else {
+            topicListArr = JSON.parse(topicListArr);
+            if (topicListArr.length > 9) {
+                topicListArr.shift();
+            }
+            topicListArr.push(data);
+        }
+        wx.setStorageSync('topicListArr', JSON.stringify(topicListArr));
+
+    } catch (e) {
+
+    }
+}
+
+export let getTopicList = () => {
+    try {
+        var topicListArr = wx.getStorageSync('topicListArr');
+        if (topicListArr) {
+            return JSON.parse(topicListArr);
+        } else {
+            return [];
+        }
+    } catch (e) {
+
+    }
+}
