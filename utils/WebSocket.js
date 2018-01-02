@@ -30,6 +30,7 @@ class WebSocket {
         /**
          * 成功建立连接
          */
+        console.log("wx.onSocketOpen");
         wx.onSocketOpen(res => {
             this.debug && console.log('webSocket is connected!', res);
             this.isOpen = true;

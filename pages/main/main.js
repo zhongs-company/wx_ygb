@@ -17,7 +17,7 @@ var app = getApp();
 //             isTada: false,
 //             advertiserName: '获得 ' + i,
 //             entityName: '' + i,
-//             money: 8.8
+//             money: 8.8 
 //         })
 //     }
 //     return arr;
@@ -27,6 +27,8 @@ var app = getApp();
 Page({
     webSocket: null,
     data: {
+        isHideLiveOverPopup: true,
+        overPopupOnline: 0,
         online: 0, //在线人数
         entityZjPopup: true,
         entityMzjPopup: true,
@@ -56,19 +58,20 @@ Page({
         itemId: 'id0',
         menuMoney: 0,
         loadend: false, //是否加载完成
-        anchor: { anchorIcon: "" }
+        anchor: { anchorIcon: "" },
+        isOnEnd: false
     },
 
     /**
      * 生命周期函数--监听页面加载
      * 
      */
-    onLoad: function (options) {
+    onLoad: function(options) {
 
         var { share } = options;
         this.setData({ share });
 
-        setTimeout(() => {
+        this.onloadTimer = setTimeout(() => {
             if (this.data.loadend) {
                 return;
             }
@@ -76,7 +79,7 @@ Page({
                 title: '提示',
                 content: '网速过慢，重新进入下吧？',
                 showCancel: false,
-                success: function (res) {
+                success: function(res) {
                     wx.reLaunch({
                         url: '/pages/main/main',
                     })
@@ -131,7 +134,7 @@ Page({
             }, 500);
 
             //3.获取用户授权信息， 并连接socket
-            this.getUserInfoAndLinkSocket(() => { });
+            this.getUserInfoAndLinkSocket(() => {});
         });
 
         wx.showShareMenu({
@@ -143,7 +146,7 @@ Page({
     /**
      * 生命周期函数--监听页面初次渲染完成
      */
-    onReady: function () {
+    onReady: function() {
         console.log('main onReady');
 
         this.compereAudio = wx.createAudioContext('compereAudio');
@@ -156,7 +159,7 @@ Page({
     /**
      * 生命周期函数--监听页面显示
      */
-    onShow: function () {
+    onShow: function() {
 
         // this.liveAudioPlay();
         this.livePlay(this.isUserLivePlay);
@@ -167,7 +170,8 @@ Page({
             console.log('isOpen:', this.webSocket.isOpen);
             if (!this.webSocket.isOpen) {
                 app.getWatermark((watermark) => {
-                    this.linkSocket(watermark, () => { });
+                    console.log("首页onshow获得水印", watermark);
+                    this.linkSocket(watermark, () => {});
                 });
             }
         }
@@ -177,7 +181,7 @@ Page({
     /**
      * 生命周期函数--监听页面隐藏
      */
-    onHide: function () {
+    onHide: function() {
         console.log('main onHide');
 
         this.compereAudio.pause();
@@ -187,7 +191,7 @@ Page({
     /**
      * 生命周期函数--监听页面卸载
      */
-    onUnload: function () {
+    onUnload: function() {
         console.log('main onUnload');
 
         this.isSocketLinked = false;
@@ -203,26 +207,28 @@ Page({
             this.data.headAniTimer = null;
         }
 
+        this.onloadTimer && clearTimeout(this.onloadTimer);
+
     },
 
     /**
      * 页面相关事件处理函数--监听用户下拉动作
      */
-    onPullDownRefresh: function () {
+    onPullDownRefresh: function() {
 
     },
 
     /**
      * 页面上拉触底事件的处理函数
      */
-    onReachBottom: function () {
+    onReachBottom: function() {
 
     },
 
     /**
      * 用户点击右上角分享
      */
-    onShareAppMessage: function (res) {
+    onShareAppMessage: function(res) {
 
         let { lotteryEntity, lotteryRedpack, isHideQiangPopup, isHideEntityPopup, banner, title } = this.data;
 
@@ -283,9 +289,12 @@ Page({
         }
 
         let order = () => {
+
+            var { banner, title } = this.data;
+
             return {
-                title: '',
-                imageUrl: 'https://1251097942.cdn.myqcloud.com/1251097942/platform/miniApp/shake_broadcast_images/share-bg.png',
+                title,
+                imageUrl: banner,
                 path: `/pages/main/main?share=order`
             }
         }
@@ -334,7 +343,7 @@ Page({
                         url: `/pages/mainUserCenter/index?title=${title}`
                     })
                 } else {
-                    this.liveEnd("http://cdn.s.weshaketv.com/ygb/images/imgs/20171218/8a20d771-e45e-451b-8b16-e481d6e8d6e6.jpeg", "那些年");
+                    this.liveEnd();
                 }
                 return;
             }
@@ -391,22 +400,37 @@ Page({
 
             //初始化实物
             if (data.lotteryEntity) {
+
+                var { entityIcon, advertiserIcon } = data.lotteryEntity;
+
+                if (entityIcon) {
+                    data.lotteryEntity.entityIcon = utils.getUrl(entityIcon);
+                }
+
+                if (advertiserIcon) {
+                    data.lotteryEntity.advertiserIcon = utils.getUrl(advertiserIcon);
+                }
+
                 //是否有实物
                 if (data.lotteryEntity.hasEntity) {
                     var { isJoin } = data.lotteryEntity;
                     var { fromShare } = this.data;
+
+
+
                     //显示实物按钮
                     this.setData({
                         isWinHide: false
                     });
                     if (fromShare != 'package') {
+
                         this.entityCountDown(data.lotteryEntity);
                         //是否报名实物
-                        if (!isJoin) {
-                            this.setData({
-                                isHideEntityPopup: false
-                            });
-                        }
+                        // if (!isJoin) {
+                        //     this.setData({
+                        //         isHideEntityPopup: false
+                        //     });
+                        // }
                     }
                 }
             }
@@ -519,7 +543,9 @@ Page({
     onHeartbeat(cb) {
         //拉取数据
         var { issueCode } = this.data;
-
+        if (!issueCode) {
+            return;
+        }
         wx.request({
             url: `${config.https_url}/mini/${app.channel_code}/${app.program_code}/heartbeat`,
             data: {
@@ -582,12 +608,14 @@ Page({
                     }
 
                     //向用户头像内存中push数据
-                    for (var j = onlineMessage.length - 1; j >= 0; j--) {
-                        // var onlineMessageId = onlineMessage[j].id
-                        // if (onlineMessageId > lastImgsId) {
-                        //     this.onLineData(onlineMessage[j]);
-                        // }
-                        this.onLineData(onlineMessage[j]);
+                    if (onlineMessage) {
+                        for (var j = onlineMessage.length - 1; j >= 0; j--) {
+                            // var onlineMessageId = onlineMessage[j].id
+                            // if (onlineMessageId > lastImgsId) {
+                            //     this.onLineData(onlineMessage[j]);
+                            // }
+                            this.onLineData(onlineMessage[j]);
+                        }
                     }
                 }
             },
@@ -687,6 +715,12 @@ Page({
             return;
         }
 
+        //这个红包结束了
+        if (data.type == 38) {
+            this.currentPackageOver();
+            return;
+        }
+
         // 用户进入房间
         if (data.type == 1 && data.action == 1) {
             this.onLineData(data);
@@ -716,15 +750,17 @@ Page({
         console.log("data.type", data.type);
         //直播结束
         if (data.type == 2) {
-            var { banner, title } = this.data;
-            this.liveEnd(banner, title);
+            //var { banner, title } = this.data;
+            //this.liveEnd(banner, title);
+            this.liveOverPopup();
+            this.liveAudio.pause();
         }
 
         //开播
         if (data.type == 3) {
             wx.reLaunch({
                 url: `/pages/main/main`,
-                success: () => { }
+                success: () => {}
             });
         }
 
@@ -934,7 +970,30 @@ Page({
             data.icon = utils.getHeadSrc(data.icon);
         }
 
-        var { listInput } = this.data;
+        var { listInput, listOutput } = this.data;
+
+        //头像，名称，文本内容三者相同，不显示这条数据
+        let uniqList = (list, data) => {
+            for (let i = list.length - 1; i >= 0; i--) {
+                let { icon, nickName, resource } = list[i];
+                let { message } = resource;
+                if (icon == data.icon && nickName == data.nickName) {
+                    if (message == data.resource.message) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        if (uniqList(listInput, data)) {
+            return;
+        }
+
+        if (uniqList(listOutput, data)) {
+            return;
+        }
+
+
 
         listInput.push(data);
 
@@ -966,11 +1025,11 @@ Page({
 
     // 主持人消息类型---红包结果信息
     showPackageInfo(data) {
-        if (data.resource.lotteryRedpackSendId == this.data.lotteryRedpack.redpackId) {
-            this.setData({
-                isHidePackageBtn: true
-            });
-        }
+        // if (data.resource.lotteryRedpackSendId == this.data.lotteryRedpack.redpackId) {
+        //     this.setData({
+        //         isHidePackageBtn: true
+        //     });
+        // }
 
 
         var { websoketData } = this.data;
@@ -1032,7 +1091,12 @@ Page({
 
     //webSocket消息35 获取红包滚动信息
     getPackageScrollData(data) {
-        var { packageArr } = this.data;
+        var { packageArr, listInput } = this.data;
+
+        if (listInput.length > 100) {
+            return;
+        }
+
         data.money = utils.toFixed(data.money);
 
         if (data.userIcon) {
@@ -1157,7 +1221,7 @@ Page({
 
         wx.showActionSheet({
             itemList: phoneMsg,
-            success: function (res) {
+            success: function(res) {
 
                 var advertiserId = hotline[res.tapIndex].id
 
@@ -1168,7 +1232,7 @@ Page({
                     }
                 })
             },
-            fail: function (res) {
+            fail: function(res) {
                 console.log(res.errMsg)
             }
         });
@@ -1178,7 +1242,7 @@ Page({
     checkImg() {
         var { websoketData, title } = this.data;
         var { resourceCode } = websoketData[0].resource;
-        //var images = websoketData[0].resource.images
+        // var images = websoketData[0].resource.images
         // wx.previewImage({
         //     current: images[0],
         //     urls: images // 需要预览的图片http链接列表
@@ -1198,8 +1262,10 @@ Page({
     },
 
     //播放主持人语音
+    currentAudioUrl: '',
     playCompereVoice() {
         var { websoketData } = this.data;
+        var { url } = websoketData[0].resource;
         //是否播放
         if (websoketData[0].isPlay) {
             this.compereAudio.pause();
@@ -1207,7 +1273,10 @@ Page({
         } else {
             //播放
             websoketData[0].isPlay = true;
-            this.compereAudio.setSrc(websoketData[0].resource.url);
+            if (this.currentAudioUrl != url) {
+                this.currentAudioUrl = url;
+                this.compereAudio.setSrc(url);
+            }
             this.compereAudio.play();
         }
 
@@ -1679,9 +1748,9 @@ Page({
         });
     },
 
-    liveEnd(banner, title) {
+    liveEnd() {
         wx.reLaunch({
-            url: `/pages/mainEnd/index?banner=${banner}&title=${title}`
+            url: `/pages/mainEnd/index`
         });
     },
 
@@ -1712,12 +1781,36 @@ Page({
     },
 
     //语音详情
-    toResouceAudio(){
-        var { websoketData, title } = this.data;        
+    toResouceAudio() {
+        var { websoketData, title } = this.data;
         var toObj = JSON.stringify(websoketData[0]);
         wx.navigateTo({
             url: `/pages/resouceAudio/index?toObj=${toObj}&title=${title}`,
         });
+    },
+
+    //直播结束弹窗
+    liveOverPopup() {
+        var { online, overPopupOnline } = this.data;
+        overPopupOnline = online;
+        this.setData({
+            overPopupOnline,
+            isHideLiveOverPopup: false,
+            isRotateBanner: false
+        });
+    },
+
+    //去结束页面
+    toMainEnd() {
+        // var { banner, title } = this.data;
+        this.liveEnd();
+    },
+
+    currentPackageOver() {
+        this.setData({
+            isHidePackageBtn: true,
+            isHideQiangPopup: true
+        })
     }
 
 

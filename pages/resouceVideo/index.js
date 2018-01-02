@@ -13,26 +13,23 @@ Page({
      * 生命周期函数--监听页面加载
      */
     onLoad: function(options) {
-        var { src, obj, resouce } = options;
+        var { src, resouce } = options;
 
-        var url = `${src}`;
+        // var url = `${src}`;
         //视频链接分带参数和不带参数2种情况
-        if (obj) {
-            obj = JSON.parse(obj);
-            url += '?';
-            for (var o in obj) {
-                url += (`${o}=${obj[o]}&`)
-            }
-        }
+        // if (obj) {
+        //     obj = JSON.parse(obj);
+        //     url += '?';
+        //     for (var o in obj) {
+        //         url += (`${o}=${obj[o]}&`)
+        //     }
+        // }
 
-        this.setData({
-            src: url
-        });
+        this.setData({ src, resouce });
 
         if (app.title) {
             utils.setPageTile(app.title);
         }
-
 
         if (resouce) {
             var { message, icon, nickName, poster } = JSON.parse(resouce);
@@ -106,10 +103,11 @@ Page({
     },
 
     onShare() {
-        var { message, icon, nickName, poster } = this.data;
+        var { message, icon, nickName, poster, src, resouce } = this.data;
         return {
             title: message,
-            imageUrl: poster
+            imageUrl: poster,
+            path: `/pages/resouceVideo/index?src=${src}&resouce=${resouce}`
         }
     }
 })

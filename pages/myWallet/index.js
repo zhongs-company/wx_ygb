@@ -153,7 +153,12 @@ Page({
 
         this.isToTx = true;
 
+        wx.showLoading({
+            title: '提现走起！',
+        });
+
         app.getWatermark((watermark) => {
+            wx.hideLoading();
             wx.navigateTo({
                 url: `/pages/exchange/index?watermark=${watermark}`,
                 complete: () => {

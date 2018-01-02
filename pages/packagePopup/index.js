@@ -1,19 +1,22 @@
 var app = getApp();
 import * as utils from '../../utils/util'
 import * as api from '../main/api'
+
 Page({
 
     /**
      * 页面的初始数据
      */
     data: {
-        isHideQunQiangPopup: true
+        isHideQunQiangPopup: true,
+        noWin:true
     },
 
     /**
      * 生命周期函数--监听页面加载
      */
     onLoad: function(options) {
+
         wx.showLoading({
           title: '搜寻红包中...',
         })
@@ -45,7 +48,6 @@ Page({
 
             })
         }
-
     },
 
     /**
@@ -103,7 +105,6 @@ Page({
      * status = 2 // 跳页面-抢光了
      * status = 3 // 跳页面-这个群不能抢
      */
-
     showPackagePopup(options) {
 
         app.getOpenGId(options.redpackId, (res) => {
@@ -117,16 +118,9 @@ Page({
               } catch (e) {
                 // Do something when catch error
               }
-              wx.showModal({
-                showCancel: false,
-                title: '提示',
-                content: '您与红包插肩而过，继续努力',
-                success:function(res){
-                  wx.reLaunch({
-                    url: '/pages/main/main'
-                  });
-                }
-              })
+              this.setData({
+                noWin:false
+              });
               return;
             }
 
@@ -185,7 +179,6 @@ Page({
             }
 
         });
-
     },
     hideQunQiangPopup() {
         this.setData({
@@ -197,7 +190,6 @@ Page({
             isHideQunQiangPopup: false
         });
     },
-
     /**
      * 点击“开”，调用lottery接口
      * lottery接口 status == 0 才是中奖了，其它状态都没中奖；
@@ -257,5 +249,11 @@ Page({
         });
 
 
+    },
+    noWinfun(){
+      wx.reLaunch({
+        url: `/pages/main/main`,
+        success: () => { }
+      });
     }
 })

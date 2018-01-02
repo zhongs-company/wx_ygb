@@ -164,3 +164,13 @@
     background-position: 0 0;
     background-image: url(https://1251097942.cdn.myqcloud.com/1251097942/platform/miniApp/shake_broadcast_images/center.jpg); 
 }
+
+.version{
+    position: absolute;
+    right:20rpx;
+    bottom:120rpx;
+    color:#ccc;
+    font-size: 20rpx;
+    line-height: 24rpx;
+    z-index: 10;
+}

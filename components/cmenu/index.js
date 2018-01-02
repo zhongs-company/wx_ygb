@@ -31,9 +31,14 @@ Component({
      * 组件的初始数据
      */
     data: {
+        version:''
+    },
+    attached() {
+
+        var { version } = wx.getExtConfigSync();
+        this.setData({ version });
 
     },
-
     /**
      * 组件的方法列表
      */

@@ -1,4 +1,5 @@
-import * as utils from '../../utils/util'
+
+import * as utils from '../../utils/util';
 
 Page({
 
@@ -6,31 +7,23 @@ Page({
      * 页面的初始数据
      */
     data: {
-        audioAni: false
+
     },
 
     /**
      * 生命周期函数--监听页面加载
      */
     onLoad: function (options) {
-        var { toObj, title } = options;
+        wx.hideLoading();
+        utils.setPageTile('热点头条');
 
-        this.setData({ toObj, title });
-
-        utils.setPageTile(title);
-
-        var { icon, nickName, resource } = JSON.parse(toObj);
-        var { url, message, time } = resource;
-
-        this.setData({ title, icon, nickName, url, message, time });
     },
 
     /**
      * 生命周期函数--监听页面初次渲染完成
      */
     onReady: function () {
-        this.myAudio = wx.createAudioContext('myAudio');
-
+        
     },
 
     /**
@@ -72,28 +65,6 @@ Page({
      * 用户点击右上角分享
      */
     onShareAppMessage: function () {
-        return this.onShare();
-    },
-
-    play() {
-        this.myAudio.play();
-        this.setData({
-            audioAni: true
-        })
-    },
-    pause() {
-        this.myAudio.pause();
-        this.setData({
-            audioAni: false
-        })
-    },
-    onShare() {
-        var { message, toObj, title } = this.data;
-
-        return {
-            title: message,
-            path: `/pages/resouceAudio/index?toObj=${toObj}&title=${title}`
-        }
 
     }
 })

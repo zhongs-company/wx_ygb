@@ -19,4 +19,5 @@
             </view>
         </view>
     </view>
+    <view class="version">{{version}}</view>
 </view>

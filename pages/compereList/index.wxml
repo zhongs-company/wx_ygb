@@ -52,7 +52,7 @@
         </view>
     </view>
     <!-- 2语音 -->
-    <view class="c-compere" wx:if="{{ item.resourceType == 2 }}">
+    <view class="c-compere" wx:if="{{ item.resourceType == 2 }}" data-index="{{index}}" bindtap="toResouceAudio">
         <view class="compere-type">
             <image class="type-head" src="{{item.icon}}"></image>
             <view class="type-info">
@@ -62,7 +62,7 @@
             </view>
             <view class="type-msg">{{item.resource.message}}</view>
             <!-- <view class="type-voice" bindtap="playVoice" data-src="{{ item.resource.url }}" data-index="{{ index }}"> -->
-            <view class="type-voice" bindtap="playCompereAudio" data-src="{{ item.resource.url }}" data-index="{{ index }}">
+            <view class="type-voice" catchtap="playCompereAudio" data-src="{{ item.resource.url }}" data-index="{{ index }}">
                 <view class="voice-ani-box">
                     <view hidden="{{!item.isPlay}}" class="audio-ani-box play">
                         <view class="line line1 start"></view>

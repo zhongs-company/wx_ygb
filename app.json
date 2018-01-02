@@ -1,10 +1,12 @@
 {
     "pages": [
-        "pages/mainEnd/index",
         "pages/main/main",
-        "pages/resouceAudio/index",
+        "pages/mainNews/index",
+        "pages/mainNewsDetail/index",
+        "pages/mainEnd/index",
         "pages/exit/index",
         "pages/resouceImages/index",
+        "pages/resouceAudio/index",
         "pages/resouceVideo/index",
         "pages/mainUserCenter/index",
         "pages/myPrizeYgq/index",
@@ -18,14 +20,14 @@
         "pages/myPrizeSelectGet/index",
         "pages/compereList/index",
         "pages/entityDetail/index",
-        "pages/packageDetail/index",
         "pages/packagePopup/index",
+        "pages/packageDetail/index",
         "pages/exchange/index"
     ],
     "window": {
         "backgroundTextStyle": "light",
         "navigationBarBackgroundColor": "#fff",
-        "navigationBarTitleText": "WeChat",
+        "navigationBarTitleText": "",
         "navigationBarTextStyle": "black"
     }
 }

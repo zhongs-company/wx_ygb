@@ -14,7 +14,7 @@ Page({
     /**
      * 生命周期函数--监听页面加载 
      */
-    onLoad: function(options) {
+    onLoad: function (options) {
 
         api.msgList(app.channel_code, app.program_code, (data) => {
             var compere = [];
@@ -97,7 +97,7 @@ Page({
     /**
      * 生命周期函数--监听页面初次渲染完成
      */
-    onReady: function() {
+    onReady: function () {
         // this.myAudio = wx.createInnerAudioContext();
 
         this.compereAudio = wx.createAudioContext('myAudio');
@@ -116,42 +116,42 @@ Page({
     /**
      * 生命周期函数--监听页面显示
      */
-    onShow: function() {
+    onShow: function () {
 
     },
 
     /**
      * 生命周期函数--监听页面隐藏
      */
-    onHide: function() {
+    onHide: function () {
 
     },
 
     /**
      * 生命周期函数--监听页面卸载
      */
-    onUnload: function() {
+    onUnload: function () {
 
     },
 
     /**
      * 页面相关事件处理函数--监听用户下拉动作
      */
-    onPullDownRefresh: function() {
+    onPullDownRefresh: function () {
 
     },
 
     /**
      * 页面上拉触底事件的处理函数
      */
-    onReachBottom: function() {
+    onReachBottom: function () {
 
     },
 
     /**
      * 用户点击右上角分享
      */
-    onShareAppMessage: function() {
+    onShareAppMessage: function () {
 
     },
 
@@ -210,16 +210,22 @@ Page({
 
     checkImg(e) {
         var { imgarr, img, index } = e.currentTarget.dataset;
-        wx.previewImage({
-            current: img,
-            urls: imgarr // 需要预览的图片http链接列表
-        });
+        // wx.previewImage({
+        //     current: img,
+        //     urls: imgarr // 需要预览的图片http链接列表
+        // });
 
-        var { resource } = this.data.msgList[index];
+        var { msgList, programName } = this.data;
+        var { resource } = msgList[index];
         //流量统计
         if (resource.resourceCode) {
             app.flowStatis(resource.resourceCode);
         }
+
+        var toObj = JSON.stringify(msgList[index]);
+        wx.navigateTo({
+            url: `/pages/resouceImages/index?toObj=${toObj}&title=${programName}`,
+        });
     },
     checkMap(e) {
         var { index } = e.currentTarget.dataset;
@@ -243,7 +249,7 @@ Page({
         }
 
 
-        console.log(src);
+        // console.log(src);
 
         this.myAudio.src = src;
         this.myAudio.play();
@@ -306,9 +312,6 @@ Page({
             }
         });
     },
-
-
-
     playedResourceCode: '',
     playCompereAudio(e) {
         var { src, index } = e.currentTarget.dataset;
@@ -350,5 +353,14 @@ Page({
             }
         });
         this.setData({ msgList });
+    },
+
+    toResouceAudio(e) {
+        var { index } = e.currentTarget.dataset;
+        var { msgList, programName } = this.data;
+        var toObj = JSON.stringify(msgList[index]);
+        wx.navigateTo({
+            url: `/pages/resouceAudio/index?toObj=${toObj}&title=${programName}`,
+        });
     }
 })

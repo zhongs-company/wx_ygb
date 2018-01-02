@@ -11,3 +11,10 @@
             红包</view>
     </view>
 </view>
+
+<view class="show-package package-center" hidden="{{noWin}}">
+    <view class="no-win-box animated {{ noWin ? '' : 'bounceInDown' }}">
+        <view class="no-win"></view>
+        <view class="no-win-btn" bindtap='noWinfun'></view>
+    </view>
+</view>

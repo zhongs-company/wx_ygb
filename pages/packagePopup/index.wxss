@@ -16,7 +16,6 @@
     position: relative;
 }
 
-
 .show-package .package .icon {
     display: block;
     width: 119rpx;
@@ -52,8 +51,6 @@
     margin: 38rpx auto 0;
 }
 
-
-
 .qun-share-bg {
     padding-top: 50rpx;
 }
@@ -69,4 +66,33 @@
 
 .qun-share-bg .package .footer-msg {
     padding-top: 140rpx;
+}
+
+
+
+
+
+/* 没中奖  */
+.package-center{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.no-win {
+    background-image: url(https://1251097942.cdn.myqcloud.com/1251097942/platform/miniApp/shake_broadcast_images/no-win.png);
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    background-position: center center;
+    width: 631rpx;
+    height: 743rpx;
+}
+
+.no-win-btn {
+    background-image: url(https://1251097942.cdn.myqcloud.com/1251097942/platform/miniApp/shake_broadcast_images/back-hudong.png);
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    background-position: center center;
+    width: 492rpx;
+    height: 101rpx;
+    margin:20rpx auto 0;
 }

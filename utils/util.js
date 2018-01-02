@@ -91,7 +91,7 @@ export var countDown = (t) => {
 
 
     var h = Math.floor(t / 3600);
-    var f = Math.floor(t / 60);
+    var f = Math.floor((t- h * 3600) / 60);
     var m = Math.floor(t % 60);
 
     var d = [];
@@ -198,29 +198,35 @@ export let wxShareMsg = (res) => {
             content: '分享到群，才能领红包！'
         })
     } else {
+        var redpackId = res.redpackId;
         var shareTicket = res.shareTickets[0]
         wx.getShareInfo({
             shareTicket,
             success: (res) => {
                 console.log("分享内容", res);
+                let {iv,encryptedData} = res;
                 //分享到群
+                // wx.showModal({
+                //     title: '提示',
+                //     confirmText: '去抢红包',
+                //     cancelText: '暂时不去',
+                //     content: '分享成功，现在就去抢红包吗？',
+                //     success: (res) => {
+                //         if (res.confirm) {
+                //             wx.reLaunch({
+                //               url: `/pages/packagePopup/index?redpackId=${redpackId}&iv=${iv}&encryptedData=${encryptedData}`,
+                //             })
+                //         } else if (res.cancel) {
+                //             console.log('用户点击取消')
+                //         }
+
+                //     }
+
+                // })
                 wx.showModal({
-                    title: '提示',
-                    confirmText: '去抢红包',
-                    cancelText: '暂时不去',
-                    content: '现在去分享的群里抢红包吗？',
-                    success: (res) => {
-
-                        if (res.confirm) {
-                            wx.reLaunch({
-                                url: '/pages/exit/index',
-                            })
-                        } else if (res.cancel) {
-                            console.log('用户点击取消')
-                        }
-
-                    }
-
+                  showCancel: false,
+                  title: '提示',
+                  content: '从分享的群中进入，才可领取红包哦~'
                 })
             },
             fail: (res) => {
@@ -293,4 +299,17 @@ export let getTopicList = (program_code) => {
     } catch (e) {
 
     }
+}
+
+
+//年月日
+export let getNYR = (date)=>{
+    let d = new Date(date);
+
+    let Y = d.getFullYear();
+    let M = d.getMonth() < 10 ? (d.getMonth()-0) + 1 : d.getMonth();
+    let D = d.getDate() < 10 ? (d.getDate()-0) + 1 : d.getDate(); 
+
+    return `${Y}-${M}-${D}`; 
+
 }
